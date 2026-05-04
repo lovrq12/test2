@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>المافيا 🎭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap" rel="stylesheet"/>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+:root{
+  --bg:       #04040a;
+  --bg2:      #080810;
+  --bg3:      #0e0e1c;
+  --bg4:      #151525;
+  --red:      #9b111e;
+  --red2:     #d42b3a;
+  --redglow:  rgba(212,43,58,.35);
+  --gold:     #c8960c;
+  --gold2:    #f0c040;
+  --goldglow: rgba(200,150,12,.4);
+  --blue:     #00bfff;
+  --green:    #00c875;
+  --purple:   #6c3fa0;
+  --silver:   #8a9bb0;
+  --text:     #ede0cf;
+  --text2:    #8a9bb0;
+  --text3:    #3d4a5c;
+  --border:   rgba(255,255,255,.07);
+  --borderg:  rgba(200,150,12,.35);
+  --glass:    rgba(255,255,255,.035);
+  --glassH:   rgba(255,255,255,.07);
+  --r:14px; --r2:20px; --r3:28px;
+  --fn:'Tajawal',sans-serif;
+  --fd:'Noto Kufi Arabic','Tajawal',serif;
+  --tr:all .25s cubic-bezier(.4,0,.2,1);
+  --sh:0 24px 60px rgba(0,0,0,.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--fn);background:var(--bg);color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+#bg-anime{position:fixed;inset:0;z-index:0;background:url('fds.jpg') center center/cover no-repeat;opacity:0.13;pointer-events:none;filter:grayscale(20%)}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+button{font-family:var(--fn);cursor:pointer;border:none;outline:none}
+input{font-family:var(--fn);outline:none;border:none}
+*{scrollbar-width:thin;scrollbar-color:var(--red) var(--bg3)}
+
+/* ── Stars ───────────────────────────────────── */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) var(--dl) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.1;transform:scale(1)}50%{opacity:.9;transform:scale(1.6)}}
+
+/* ── Screens ─────────────────────────────────── */
+.screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transform:translateY(18px);pointer-events:none;transition:opacity .4s ease,transform .4s ease;overflow-y:auto}
+.screen.on{opacity:1;transform:translateY(0);pointer-events:all}
+
+/* ── Glass Panel ─────────────────────────────── */
+.glass{background:rgba(14,14,28,.78);backdrop-filter:blur(24px) saturate(130%);-webkit-backdrop-filter:blur(24px) saturate(130%);border:1px solid var(--border);border-radius:var(--r3);box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* ── Buttons ─────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:var(--r);font-size:1.05rem;font-weight:700;transition:var(--tr);position:relative;overflow:hidden;user-select:none}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);opacity:0;transition:opacity .2s}
+.btn:hover::after{opacity:1}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.btn-red{background:linear-gradient(135deg,#7a0e18,#c0202e);color:var(--text);box-shadow:0 6px 24px var(--redglow);border:1px solid rgba(192,32,46,.4)}
+.btn-red:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(155,17,30,.65)}
+.btn-gold{background:linear-gradient(135deg,#8a6500,#c8960c);color:#0a0800;font-weight:900;box-shadow:0 6px 24px var(--goldglow);border:1px solid rgba(200,150,12,.4)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(200,150,12,.6)}
+.btn-ghost{background:var(--glass);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--glassH);color:var(--text)}
+.btn-full{width:100%}
+.btn-lg{padding:18px 36px;font-size:1.2rem}
+.btn-sm{padding:8px 14px;font-size:.85rem}
+
+/* ── Input ───────────────────────────────────── */
+.field{width:100%;padding:14px 18px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:1rem;font-family:var(--fn);transition:var(--tr);text-align:right}
+.field:focus{border-color:var(--red2);background:rgba(212,43,58,.08);box-shadow:0 0 0 3px rgba(212,43,58,.15)}
+.field::placeholder{color:var(--text3)}
+.field-code{text-align:center;font-size:2rem;font-family:var(--fd);font-weight:900;letter-spacing:.3em;text-transform:uppercase}
+
+/* ══════════════════════════════════════════════
+   SCREEN: HOME
+══════════════════════════════════════════════ */
+#s-home .p{width:min(420px,100%);padding:48px 40px;text-align:center}
+.logo-icon{font-size:5rem;display:block;margin:0 auto 16px;filter:drop-shadow(0 0 30px rgba(155,17,30,.8));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.logo-title{font-family:var(--fd);font-size:3rem;font-weight:900;text-shadow:0 0 40px rgba(155,17,30,.6);letter-spacing:-.02em}
+.logo-sub{font-size:.9rem;color:var(--text2);margin-top:8px;letter-spacing:.08em}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--red2),transparent);margin:28px auto}
+.tabs{display:flex;gap:6px;background:var(--bg4);border-radius:var(--r);padding:4px;margin-bottom:18px}
+.tab{flex:1;padding:10px;border-radius:10px;background:transparent;color:var(--text2);font-size:.95rem;font-weight:600;font-family:var(--fn);transition:var(--tr)}
+.tab.on{background:var(--red);color:var(--text);box-shadow:0 4px 12px var(--redglow)}
+.tc{display:none}.tc.on{display:block}
+
+/* ══════════════════════════════════════════════
+   SCREEN: LOBBY
+══════════════════════════════════════════════ */
+#s-lobby .p{width:min(700px,100%);padding:28px}
+.lhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.code-box{background:var(--bg4);border:1px solid var(--borderg);border-radius:var(--r);padding:10px 20px;text-align:center;cursor:pointer}
+.code-lbl{font-size:.7rem;color:var(--text2);margin-bottom:2px}
+.code-val{font-family:var(--fd);font-size:2rem;font-weight:900;color:var(--gold2);letter-spacing:.3em;text-shadow:var(--goldglow)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
+.pslot{background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:10px;min-height:60px;transition:var(--tr)}
+.pslot.empty{border-style:dashed;opacity:.35;justify-content:center;font-size:.8rem;color:var(--text3)}
+.pslot.ready{border-color:var(--green);box-shadow:0 0 10px rgba(0,200,117,.15)}
+.pav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;position:relative}
+.pav .crown{position:absolute;top:-9px;right:-3px;font-size:.8rem;filter:drop-shadow(0 0 5px var(--gold))}
+.pinfo{min-width:0;flex:1}
+.pname{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pstatus{font-size:.72rem;color:var(--text2)}
+.pstatus.r{color:var(--green)}
+.hset{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:18px}
+.hset-t{font-size:.75rem;color:var(--text2);letter-spacing:.1em;margin-bottom:10px}
+.srow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px}
+.slbl{font-size:.88rem;color:var(--text2)}
+.ssel{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-family:var(--fn);font-size:.88rem}
+.lbtns{display:flex;gap:10px;flex-wrap:wrap}
+.lbtns .btn{flex:1;min-width:110px}
+
+/* ══════════════════════════════════════════════
+   SCREEN: ROLE REVEAL
+══════════════════════════════════════════════ */
+#s-role{background:radial-gradient(ellipse at center,rgba(26,10,53,.96) 0%,rgba(4,4,10,.99) 70%)}
+#s-role .p{width:min(390px,100%);padding:36px 28px;text-align:center}
+.rr-title{font-family:var(--fd);font-size:1rem;color:var(--text2);letter-spacing:.15em;margin-bottom:20px}
+.card-wrap{perspective:1200px;margin:0 auto 22px;width:220px;height:340px}
+.rcard{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.rcard.flip{transform:rotateY(180deg)}
+.rface,.rback{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+/* ── Card Back ── */
+.rback{background:linear-gradient(135deg,#0e0e20,#1e1040);border:3px solid rgba(108,63,160,.6);box-shadow:0 0 50px rgba(108,63,160,.4),0 20px 60px rgba(0,0,0,.8)}
+.rback .pat{font-size:3.5rem;opacity:.12;position:absolute;top:20px;left:50%;transform:translateX(-50%)}
+.rback .ctr{font-size:3rem;filter:drop-shadow(0 0 20px rgba(108,63,160,.9));position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.rback-corner{position:absolute;width:45px;height:45px;border-color:rgba(200,150,12,.5);border-style:solid;border-width:0}
+.rback-corner.tl{top:10px;left:10px;border-top-width:2px;border-left-width:2px;border-radius:6px 0 0 0}
+.rback-corner.tr{top:10px;right:10px;border-top-width:2px;border-right-width:2px;border-radius:0 6px 0 0}
+.rback-corner.bl{bottom:10px;left:10px;border-bottom-width:2px;border-left-width:2px;border-radius:0 0 0 6px}
+.rback-corner.br{bottom:10px;right:10px;border-bottom-width:2px;border-right-width:2px;border-radius:0 0 6px 0}
+/* ── Card Face ── */
+.rface{transform:rotateY(180deg);border:3px solid;display:flex;flex-direction:column;position:relative}
+.rface[data-r=mafia]{border-color:rgba(212,43,58,.8);box-shadow:0 0 60px rgba(155,17,30,.6),0 20px 60px rgba(0,0,0,.8)}
+.rface[data-r=detective]{border-color:rgba(0,191,255,.7);box-shadow:0 0 60px rgba(0,100,200,.5),0 20px 60px rgba(0,0,0,.8)}
+.rface[data-r=doctor]{border-color:rgba(200,150,12,.7);box-shadow:0 0 60px rgba(155,100,0,.5),0 20px 60px rgba(0,0,0,.8)}
+.rface[data-r=citizen]{border-color:rgba(138,155,176,.5);box-shadow:0 0 40px rgba(100,120,150,.3),0 20px 60px rgba(0,0,0,.8)}
+/* Card image fills top portion */
+.rcard-img{width:100%;flex:1;object-fit:cover;object-position:top;min-height:0}
+/* Card label bar at top */
+.rcard-top{position:absolute;top:0;left:0;right:0;padding:8px 12px;text-align:center;z-index:2}
+.rface[data-r=mafia] .rcard-top{background:linear-gradient(180deg,rgba(155,17,30,.95) 0%,rgba(155,17,30,.0) 100%)}
+.rface[data-r=detective] .rcard-top{background:linear-gradient(180deg,rgba(0,30,80,.95) 0%,rgba(0,30,80,.0) 100%)}
+.rface[data-r=doctor] .rcard-top{background:linear-gradient(180deg,rgba(20,10,0,.95) 0%,rgba(20,10,0,.0) 100%)}
+.rface[data-r=citizen] .rcard-top{background:linear-gradient(180deg,rgba(10,10,20,.95) 0%,rgba(10,10,20,.0) 100%)}
+.rcard-rolename{font-family:var(--fd);font-size:1.3rem;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,1)}
+[data-r=mafia] .rcard-rolename{color:#ff6677}
+[data-r=detective] .rcard-rolename{color:#44ddff}
+[data-r=doctor] .rcard-rolename{color:var(--gold2)}
+[data-r=citizen] .rcard-rolename{color:#c0d0e0}
+/* Bottom label bar */
+.rcard-bot{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;text-align:center;z-index:2;background:linear-gradient(0deg,rgba(0,0,0,.9) 0%,rgba(0,0,0,.0) 100%)}
+.rcard-game{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em}
+/* Legacy (keep for flavour text shown below card) */
+.rname{font-family:var(--fd);font-size:1.5rem;font-weight:900;text-shadow:0 0 18px currentColor;margin-bottom:10px}
+.rflav{font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.65;text-align:center}
+[data-r=mafia] .rname{color:#ff4455}
+[data-r=detective] .rname{color:#44ddff}
+[data-r=doctor] .rname{color:#44ff99}
+[data-r=citizen] .rname{color:#aabbcc}
+.rr-hint{font-size:.82rem;color:var(--text2);animation:pulse 2s ease-in-out infinite;margin-bottom:16px}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.mteam{margin-top:14px;background:rgba(155,17,30,.12);border:1px solid rgba(212,43,58,.25);border-radius:var(--r);padding:12px}
+.mteam-t{font-size:.75rem;color:var(--red2);margin-bottom:8px}
+.mteam-l{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.mmate{background:rgba(212,43,58,.15);border:1px solid rgba(212,43,58,.3);border-radius:6px;padding:3px 10px;font-size:.82rem;color:#ff6677}
+
+/* ══════════════════════════════════════════════
+   SCREEN: NIGHT
+══════════════════════════════════════════════ */
+#s-night{background:radial-gradient(ellipse at top,#0d0525 0%,var(--bg) 60%)}
+#s-night .p{width:min(560px,100%);padding:28px}
+.ph-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.ph-title{font-family:var(--fd);font-size:1.8rem;font-weight:900}
+.ph-night{color:#a080ff;text-shadow:0 0 28px rgba(160,128,255,.5)}
+.ph-day{color:#ffcc44;text-shadow:0 0 28px rgba(255,204,68,.5)}
+.ph-vote{color:var(--red2);text-shadow:0 0 28px var(--redglow)}
+.round-b{background:var(--bg4);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:.78rem;color:var(--text2)}
+.timer-n{font-family:var(--fd);font-size:4rem;font-weight:900;text-align:center;line-height:1;transition:color .3s;margin-bottom:4px}
+.timer-n.warn{color:var(--red2);animation:tpulse .6s ease-in-out infinite}
+@keyframes tpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06);text-shadow:0 0 20px var(--redglow)}}
+.timer-lbl{text-align:center;font-size:.78rem;color:var(--text3);margin-bottom:18px}
+.night-panel{background:var(--bg4);border:1px solid var(--border);border-radius:18px;padding:18px}
+.np-lbl{font-size:.75rem;color:var(--text2);letter-spacing:.1em;margin-bottom:3px}
+.np-role{font-family:var(--fd);font-size:1.25rem;font-weight:900;margin-bottom:12px}
+.np-act{font-size:.88rem;color:var(--text2);margin-bottom:12px}
+.tlist{display:flex;flex-direction:column;gap:7px}
+.tbtn{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--glass);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-size:.92rem;font-weight:600;font-family:var(--fn);text-align:right;transition:var(--tr);cursor:pointer}
+.tbtn:hover{background:var(--glassH);transform:translateX(-3px)}
+.tbtn.sel{border-color:var(--gold2);background:rgba(200,150,12,.1);box-shadow:0 0 14px var(--goldglow)}
+.tbtn .tav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--red));display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.det-res{margin-top:14px;padding:12px;border-radius:var(--r);text-align:center;font-weight:700;animation:revRes .5s ease-out}
+@keyframes revRes{from{opacity:0;transform:scale(.85)}}
+.det-res.mafia{background:rgba(155,17,30,.2);border:1px solid rgba(212,43,58,.4);color:#ff4455}
+.det-res.innocent{background:rgba(0,200,117,.1);border:1px solid rgba(0,200,117,.3);color:var(--green)}
+.spec-box{background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;color:var(--text3)}
+
+/* ══════════════════════════════════════════════
+   SCREEN: DAWN
+══════════════════════════════════════════════ */
+#s-dawn .p{width:min(420px,100%);padding:48px 36px;text-align:center}
+.dawn-ico{font-size:5rem;margin-bottom:18px;display:block}
+.dawn-title{font-family:var(--fd);font-size:2rem;font-weight:900;margin-bottom:14px}
+.dawn-k{color:var(--red2);text-shadow:0 0 20px var(--redglow)}
+.dawn-s{color:var(--green)}
+.dawn-msg{font-size:1rem;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.victim-c{background:rgba(155,17,30,.1);border:1px solid rgba(212,43,58,.25);border-radius:18px;padding:18px;margin-bottom:20px}
+.victim-n{font-family:var(--fd);font-size:1.8rem;font-weight:900;color:#ff4455}
+
+/* ══════════════════════════════════════════════
+   SCREEN: DAY
+══════════════════════════════════════════════ */
+#s-day .p{width:min(700px,100%);padding:22px;max-height:92vh;display:flex;flex-direction:column}
+.day-layout{display:grid;grid-template-columns:1fr 200px;gap:14px;flex:1;min-height:0}
+@media(max-width:580px){.day-layout{grid-template-columns:1fr}}
+.chat-area{display:flex;flex-direction:column;min-height:0}
+.chat-msgs{flex:1;overflow-y:auto;padding:10px;background:rgba(0,0,0,.3);border-radius:var(--r);margin-bottom:10px;min-height:180px;max-height:320px;display:flex;flex-direction:column;gap:7px}
+.cmsg{display:flex;flex-direction:column;gap:2px;animation:msgIn .3s ease-out}
+@keyframes msgIn{from{opacity:0;transform:translateY(5px)}}
+.cauthor{font-size:.72rem;color:var(--text2);font-weight:700}
+.ctext{background:var(--bg4);border-radius:10px 2px 10px 10px;padding:7px 11px;font-size:.88rem;line-height:1.55;max-width:85%;border:1px solid var(--border)}
+.cmsg.own .ctext{background:rgba(155,17,30,.15);border-color:rgba(212,43,58,.2);align-self:flex-end;border-radius:2px 10px 10px 10px}
+.cmsg.own .cauthor{text-align:left;color:var(--red2)}
+.cmsg.sys .ctext{background:transparent;border:none;color:var(--text3);font-style:italic;font-size:.78rem;text-align:center;align-self:center}
+.chat-row{display:flex;gap:7px}
+.chat-row .field{flex:1;padding:10px 13px}
+.chat-row .btn{padding:10px 14px;flex-shrink:0}
+.day-plist{display:flex;flex-direction:column;gap:6px}
+.day-pt{font-size:.72rem;color:var(--text2);letter-spacing:.1em;margin-bottom:3px}
+.dpi{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--glass);border:1px solid var(--border);border-radius:8px;font-size:.82rem}
+.dpi.dead{opacity:.35}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.dpi.dead .dot{background:var(--text3)}
+
+/* ══════════════════════════════════════════════
+   SCREEN: VOTING
+══════════════════════════════════════════════ */
+#s-vote .p{width:min(560px,100%);padding:28px}
+.vcands{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.vcand{display:flex;align-items:center;gap:11px;padding:13px 15px;background:var(--glass);border:2px solid var(--border);border-radius:var(--r);cursor:pointer;transition:var(--tr);position:relative}
+.vcand:hover{background:var(--glassH)}
+.vcand.voted{border-color:var(--red2);background:rgba(212,43,58,.08)}
+.vcand.lead{border-color:rgba(200,150,12,.4);box-shadow:0 0 14px rgba(200,150,12,.15)}
+.vcav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--red));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.vcname{font-weight:700;flex:1}
+.vcvotes{font-family:var(--fd);font-size:1.35rem;font-weight:900;color:var(--text3);min-width:28px;text-align:center;transition:var(--tr)}
+.vcvotes.hv{color:var(--red2)}
+.vprog-t{text-align:center;font-size:.88rem;color:var(--text2);margin-bottom:6px}
+.pbar{height:4px;background:var(--bg4);border-radius:2px;margin-bottom:18px;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--red),var(--red2));border-radius:2px;transition:width .4s ease}
+#vote-msg{text-align:center;color:var(--green);font-size:.88rem;min-height:18px;font-weight:700}
+
+/* ══════════════════════════════════════════════
+   SCREEN: END
+══════════════════════════════════════════════ */
+#s-end .p{width:min(560px,100%);padding:36px;text-align:center}
+.win-banner{font-family:var(--fd);font-size:2.6rem;font-weight:900;line-height:1.2;margin-bottom:6px}
+.wm{color:#ff3344;text-shadow:0 0 40px rgba(255,51,68,.6)}
+.wc{color:#44ff99;text-shadow:0 0 40px rgba(68,255,153,.5)}
+.win-sub{font-size:.88rem;color:var(--text2);margin-bottom:24px}
+.scoreb{background:var(--bg4);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:22px}
+.srow{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.srank{font-family:var(--fd);font-size:1.15rem;font-weight:900;color:var(--text3);width:26px;text-align:center}
+.srank.g{color:var(--gold2)}.srank.s{color:#c0c0c0}.srank.b{color:#cd7f32}
+.sname{flex:1;font-weight:600;font-size:.9rem}
+.sbadge{font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:700}
+.bm{background:rgba(155,17,30,.25);color:#ff6677;border:1px solid rgba(212,43,58,.3)}
+.bd{background:rgba(0,120,200,.2);color:#44ccff;border:1px solid rgba(0,150,255,.3)}
+.bdr{background:rgba(0,150,80,.2);color:#44ff99;border:1px solid rgba(0,200,117,.3)}
+.bc{background:rgba(100,110,130,.2);color:#99aabb;border:1px solid rgba(138,155,176,.3)}
+.sdead{font-size:.78rem;color:var(--text3)}
+.spts{font-family:var(--fd);font-size:1.15rem;font-weight:900;color:var(--gold2);min-width:46px;text-align:left}
+.end-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.end-btns .btn{min-width:130px}
+
+/* ── Notifications ───────────────────────────── */
+#notifs{position:fixed;top:14px;right:14px;z-index:1000;display:flex;flex-direction:column;gap:7px;max-width:300px}
+.notif{padding:11px 14px;border-radius:var(--r);font-size:.88rem;font-weight:600;backdrop-filter:blur(20px);border:1px solid;animation:nIn .4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+@keyframes nIn{from{opacity:0;transform:translateX(38px)}}
+.ni{background:rgba(14,14,28,.9);border-color:rgba(100,120,180,.3);color:var(--text)}
+.ns{background:rgba(0,30,15,.9);border-color:rgba(0,200,117,.3);color:var(--green)}
+.nd{background:rgba(40,0,5,.9);border-color:rgba(212,43,58,.3);color:#ff6677}
+.ng{background:rgba(30,20,0,.9);border-color:rgba(200,150,12,.3);color:var(--gold2)}
+
+/* ── Loading ─────────────────────────────────── */
+#loading{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .5s}
+#loading.hide{opacity:0;pointer-events:none}
+.spin{width:46px;height:46px;border:3px solid var(--border);border-top-color:var(--red2);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-t{color:var(--text2);font-size:.88rem}
+
+@media(max-width:480px){
+  #s-home .p{padding:28px 20px}
+  .logo-title{font-size:2.2rem}
+  .code-val{font-size:1.5rem}
+  .pgrid{grid-template-columns:1fr 1fr}
+  .timer-n{font-size:3rem}
+}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spin"></div><p class="load-t">جاري الاتصال...</p></div>
+<div id="bg-anime"></div>
+<div id="stars"></div>
+<div id="notifs"></div>
+
+<!-- ══ HOME ══════════════════════════════════════ -->
+<div class="screen" id="s-home">
+  <div class="glass p">
+    <div style="margin-bottom:36px">
+      <span class="logo-icon">🎭</span>
+      <h1 class="logo-title">المـافيا</h1>
+      <p class="logo-sub">لعبة الخداع والذكاء</p>
+    </div>
+    <div class="divider"></div>
+    <div style="margin-bottom:16px">
+      <input class="field" id="inp-name" placeholder="أدخل اسمك..." maxlength="20" autocomplete="off"/>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="swTab('create',this)">إنشاء غرفة</button>
+      <button class="tab" onclick="swTab('join',this)">الانضمام</button>
+    </div>
+    <div class="tc on" id="tc-create">
+      <button class="btn btn-red btn-full btn-lg" onclick="createRoom()">＋ إنشاء غرفة جديدة</button>
+    </div>
+    <div class="tc" id="tc-join">
+      <input class="field field-code" id="inp-code" placeholder="MFX9K2" maxlength="6" style="margin-bottom:12px"/>
+      <button class="btn btn-gold btn-full btn-lg" onclick="joinRoom()">الدخول ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOBBY ══════════════════════════════════════ -->
+<div class="screen" id="s-lobby">
+  <div class="glass p">
+    <div class="lhead">
+      <div>
+        <h2 style="font-family:var(--fd);font-size:1.4rem;font-weight:900;margin-bottom:3px">صالة الانتظار</h2>
+        <p style="font-size:.82rem;color:var(--text2)" id="lbl-count">0 / 6 لاعبين</p>
+      </div>
+      <div class="code-box" onclick="copyCode()" title="اضغط للنسخ">
+        <div class="code-lbl">كود الغرفة 🔗</div>
+        <div class="code-val" id="lbl-code">------</div>
+      </div>
+    </div>
+    <div class="hset" id="host-set" style="display:none">
+      <div class="hset-t">⚙ إعدادات اللعبة</div>
+      <div class="srow">
+        <span class="slbl">عدد اللاعبين</span>
+        <select class="ssel" id="set-max" onchange="pushSettings()">
+          <option value="4">4</option><option value="5">5</option>
+          <option value="6" selected>6</option><option value="7">7</option><option value="8">8</option>
+        </select>
+      </div>
+      <div class="srow">
+        <span class="slbl">وقت الليل (ثانية)</span>
+        <select class="ssel" id="set-night" onchange="pushSettings()">
+          <option value="30">30</option><option value="45" selected>45</option><option value="60">60</option>
+        </select>
+      </div>
+      <div class="srow">
+        <span class="slbl">وقت النقاش (ثانية)</span>
+        <select class="ssel" id="set-day" onchange="pushSettings()">
+          <option value="30">30</option><option value="60" selected>60</option><option value="90">90</option>
+        </select>
+      </div>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="lbtns">
+      <button class="btn btn-ghost" onclick="leaveRoom()">مغادرة</button>
+      <button class="btn btn-red" id="btn-ready" onclick="toggleReady()">✓ جاهز</button>
+      <button class="btn btn-gold" id="btn-start" style="display:none" onclick="startGame()">▶ ابدأ اللعبة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROLE REVEAL ════════════════════════════════ -->
+<div class="screen" id="s-role">
+  <div class="glass p">
+    <p class="rr-title">🌙 تم توزيع الأدوار...</p>
+    <div class="card-wrap">
+      <div class="rcard" id="rcard" onclick="flipCard()">
+        <div class="rback">
+          <div class="pat">✦ ✦ ✦</div>
+          <div class="ctr">🃏</div>
+          <div class="rback-corner tl"></div>
+          <div class="rback-corner tr"></div>
+          <div class="rback-corner bl"></div>
+          <div class="rback-corner br"></div>
+        </div>
+        <div class="rface" id="rface" data-r="citizen">
+          <div class="rcard-top">
+            <div class="rcard-rolename" id="rname">المواطن</div>
+          </div>
+          <img class="rcard-img" id="rico" src="" alt="role"/>
+          <div class="rcard-bot">
+            <div class="rcard-game">لعبة المافيا</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="rflav" id="rflav" style="margin-bottom:12px"></p>
+    <p class="rr-hint" id="flip-hint">اضغط على البطاقة لكشف دورك</p>
+    <div id="mteam-sec" style="display:none">
+      <div class="mteam">
+        <div class="mteam-t">🔴 فريق المافيا</div>
+        <div class="mteam-l" id="mteam-list"></div>
+      </div>
+    </div>
+    <button class="btn btn-red btn-full" id="btn-ack" style="display:none;margin-top:18px" onclick="ackRole()">فهمت دوري ←</button>
+  </div>
+</div>
+
+<!-- ══ NIGHT ══════════════════════════════════════ -->
+<div class="screen" id="s-night">
+  <div class="glass p">
+    <div class="ph-head">
+      <h2 class="ph-title ph-night">🌙 الليل</h2>
+      <span class="round-b" id="night-round">الجولة 1</span>
+    </div>
+    <div class="timer-n" id="night-timer">45</div>
+    <div class="timer-lbl">ثانية متبقية</div>
+    <div id="night-content"></div>
+  </div>
+</div>
+
+<!-- ══ DAWN ═══════════════════════════════════════ -->
+<div class="screen" id="s-dawn">
+  <div class="glass p">
+    <span class="dawn-ico" id="dawn-ico">🌅</span>
+    <h2 class="dawn-title" id="dawn-title">الفجر</h2>
+    <p class="dawn-msg" id="dawn-msg"></p>
+    <div id="dawn-victim" style="display:none">
+      <div class="victim-c"><div class="victim-n" id="victim-name"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DAY ════════════════════════════════════════ -->
+<div class="screen" id="s-day">
+  <div class="glass p">
+    <div class="ph-head" style="margin-bottom:14px">
+      <h2 class="ph-title ph-day">☀ النهار</h2>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="round-b" id="day-round">الجولة 1</span>
+        <div class="timer-n" id="day-timer" style="font-size:1.8rem">60</div>
+      </div>
+    </div>
+    <div class="day-layout">
+      <div class="chat-area">
+        <div class="chat-msgs" id="chat-msgs"><div class="cmsg sys"><div class="ctext">بدأت جلسة النقاش — من المافيا؟</div></div></div>
+        <div class="chat-row" id="chat-row">
+          <input class="field" id="chat-inp" placeholder="اكتب رسالتك..." maxlength="200"/>
+          <button class="btn btn-red" onclick="sendMsg()">إرسال</button>
+        </div>
+      </div>
+      <div class="day-plist">
+        <div class="day-pt">اللاعبون</div>
+        <div id="day-plist"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VOTING ═════════════════════════════════════ -->
+<div class="screen" id="s-vote">
+  <div class="glass p">
+    <div class="ph-head">
+      <h2 class="ph-title ph-vote">🗳 التصويت</h2>
+      <div class="timer-n" id="vote-timer" style="font-size:2rem">30</div>
+    </div>
+    <p style="font-size:.88rem;color:var(--text2);margin-bottom:14px">صوّت لإقصاء شخص — أعلى الأصوات يغادر</p>
+    <div class="vprog-t" id="vprog-t">0 / 0 صوّتوا</div>
+    <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+    <div class="vcands" id="vcands"></div>
+    <div style="margin-top:8px">
+      <button class="btn btn-ghost btn-full" id="btn-abstain" onclick="abstainVote()" style="font-size:.9rem;padding:10px">🚫 لا أريد التصويت</button>
+    </div>
+    <p id="vote-msg"></p>
+  </div>
+</div>
+
+<!-- ══ END ════════════════════════════════════════ -->
+<div class="screen" id="s-end">
+  <div class="glass p">
+    <div class="win-banner" id="win-banner"></div>
+    <p class="win-sub" id="win-sub"></p>
+    <div class="scoreb" id="scoreb"></div>
+    <div class="end-btns">
+      <button class="btn btn-ghost" onclick="goHome()">← الرئيسية</button>
+      <button class="btn btn-gold" id="btn-newgame" style="display:none" onclick="newGame()">🔄 لعبة جديدة</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   FIREBASE CONFIG
+═══════════════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyOfE8IrWe_UNZaTus-OJygAk4wIILY_jjw",
+  authDomain: "endx-8ac33.firebaseapp.com",
+  databaseURL: "https://endx-8ac33-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "endx-8ac33",
+  storageBucket: "endx-8ac33.firebasestorage.app",
+  messagingSenderId: "11855321835",
+  appId: "1:11855321835:web:bb03b9acb3abf5143b1eb2"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+const G = {
+  pid: null,        // player id (random)
+  name: null,
+  roomCode: null,
+  isHost: false,
+  isReady: false,
+  isAlive: true,
+  role: null,
+  myVote: null,
+  timerInt: null,
+  listeners: [],    // firebase listeners to detach on leave
+};
+
+// Firebase refs helpers
+const ref  = path => db.ref(path);
+const rRef = ()   => ref(`rooms/${G.roomCode}`);
+
+/* ═══════════════════════════════════════════════════════════
+   STARS
+═══════════════════════════════════════════════════════════ */
+(()=>{
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');s.className='star';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;
+      width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;
+      --d:${2+Math.random()*4}s;--dl:${Math.random()*4}s;opacity:${Math.random()*.5}`;
+    c.appendChild(s);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════════════ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById('s-'+id);
+  if(el){el.classList.add('on');el.scrollTop=0;}
+}
+function notify(msg,type='i',dur=3500){
+  const c=document.getElementById('notifs');
+  const el=document.createElement('div');
+  el.className=`notif n${type}`;el.textContent=msg;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .4s,transform .4s';el.style.opacity='0';el.style.transform='translateX(38px)';setTimeout(()=>el.remove(),400);},dur);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ─── Timer ─────────────────────────────────────── */
+function startTimer(elId, secs, onDone){
+  clearInterval(G.timerInt);
+  const el=document.getElementById(elId);
+  if(!el)return;
+  let r=secs;
+  el.textContent=r;el.classList.remove('warn');
+  G.timerInt=setInterval(()=>{
+    r--;
+    if(r<0){clearInterval(G.timerInt);if(onDone)onDone();return;}
+    el.textContent=r;
+    if(r<=10)el.classList.add('warn');else el.classList.remove('warn');
+  },1000);
+}
+function stopTimer(){clearInterval(G.timerInt);}
+
+/* ─── Tabs ──────────────────────────────────────── */
+function swTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tc-'+id).classList.add('on');
+}
+
+/* ─── Copy code ─────────────────────────────────── */
+function copyCode(){
+  if(!G.roomCode)return;
+  navigator.clipboard.writeText(G.roomCode).then(()=>notify(`تم نسخ الكود: ${G.roomCode}`,'g'));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROLE HELPERS
+═══════════════════════════════════════════════════════════ */
+const EMOJIS  ={mafia:'LG2zQ.jpg',detective:'Cyjfs.jpg',doctor:'gy2MZ.jpg',citizen:'yEDjY.jpg'};
+const ARABIC  ={mafia:'المافيا',detective:'المحقق',doctor:'الطبيب',citizen:'المواطن'};
+const FLAVORS ={
+  mafia:    'أنت من المافيا... اختر ضحيتك كل ليلة بحكمة.',
+  detective:'أنت المحقق... حقّق مع شخص كل ليلة لكشف المافيا.',
+  doctor:   'أنت الطبيب... احمِ شخصاً كل ليلة من القتل.',
+  citizen:  'أنت مواطن بريء... اكشف المافيا بالتصويت.'
+};
+const DIST={
+  4:{mafia:1,detective:1,doctor:1,citizen:1},
+  5:{mafia:1,detective:1,doctor:1,citizen:2},
+  6:{mafia:2,detective:1,doctor:1,citizen:2},
+  7:{mafia:2,detective:1,doctor:1,citizen:3},
+  8:{mafia:2,detective:1,doctor:1,citizen:4},
+};
+
+/* ═══════════════════════════════════════════════════════════
+   ROOM CODE GENERATOR
+═══════════════════════════════════════════════════════════ */
+function genCode(){
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('');
+}
+function genId(){return Math.random().toString(36).slice(2,10);}
+
+/* ═══════════════════════════════════════════════════════════
+   CREATE ROOM
+═══════════════════════════════════════════════════════════ */
+async function createRoom(){
+  const name=document.getElementById('inp-name').value.trim();
+  if(!name){notify('أدخل اسمك أولاً','d');return;}
+  G.name=name; G.pid=genId(); G.isHost=true; G.isReady=false; G.isAlive=true;
+  const code=genCode();
+  G.roomCode=code;
+
+  await ref(`rooms/${code}`).set({
+    hostId: G.pid,
+    phase: 'lobby',
+    round: 1,
+    settings:{maxPlayers:6,nightDuration:45,dayDuration:60,voteDuration:30},
+    createdAt: Date.now()
+  });
+  await ref(`rooms/${code}/players/${G.pid}`).set({
+    name, isHost:true, isReady:false, isAlive:true, score:0, joinedAt:Date.now()
+  });
+
+  setupLobbyUI();
+  subscribeRoom();
+  show('lobby');
+  notify(`تم إنشاء الغرفة: ${code}`,'g');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   JOIN ROOM
+═══════════════════════════════════════════════════════════ */
+async function joinRoom(){
+  const name=document.getElementById('inp-name').value.trim();
+  const code=document.getElementById('inp-code').value.trim().toUpperCase();
+  if(!name){notify('أدخل اسمك أولاً','d');return;}
+  if(code.length!==6){notify('أدخل كود مكوّن من 6 أحرف','d');return;}
+
+  const snap=await ref(`rooms/${code}`).get();
+  if(!snap.exists()){notify('الغرفة غير موجودة','d');return;}
+  const room=snap.val();
+  if(room.phase!=='lobby'){notify('اللعبة بدأت بالفعل','d');return;}
+
+  const playersSnap=await ref(`rooms/${code}/players`).get();
+  const players=playersSnap.val()||{};
+  const maxP=room.settings?.maxPlayers||6;
+  if(Object.keys(players).length>=maxP){notify('الغرفة ممتلئة','d');return;}
+  const nameTaken=Object.values(players).some(p=>p.name===name);
+  if(nameTaken){notify('هذا الاسم مأخوذ، اختر اسماً آخر','d');return;}
+
+  G.name=name; G.pid=genId(); G.isHost=false; G.isReady=false; G.isAlive=true;
+  G.roomCode=code;
+
+  await ref(`rooms/${code}/players/${G.pid}`).set({
+    name,isHost:false,isReady:false,isAlive:true,score:0,joinedAt:Date.now()
+  });
+
+  setupLobbyUI();
+  subscribeRoom();
+  show('lobby');
+  notify('انضممت للغرفة بنجاح!','s');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOBBY UI
+═══════════════════════════════════════════════════════════ */
+function setupLobbyUI(){
+  document.getElementById('lbl-code').textContent=G.roomCode;
+  if(G.isHost){
+    document.getElementById('host-set').style.display='block';
+    document.getElementById('btn-start').style.display='inline-flex';
+    document.getElementById('btn-ready').style.display='none';
+  } else {
+    document.getElementById('host-set').style.display='none';
+    document.getElementById('btn-start').style.display='none';
+    document.getElementById('btn-ready').style.display='inline-flex';
+  }
+}
+
+function renderPlayers(players, maxP){
+  const grid=document.getElementById('pgrid');
+  grid.innerHTML='';
+  const list=Object.entries(players).sort((a,b)=>a[1].joinedAt-b[1].joinedAt);
+  list.forEach(([id,p])=>{
+    const div=document.createElement('div');
+    div.className=`pslot ${p.isReady?'ready':''}`;
+    div.innerHTML=`
+      <div class="pav">
+        ${id===G.pid?'😊':'👤'}
+        ${p.isHost?'<span class="crown">👑</span>':''}
+      </div>
+      <div class="pinfo">
+        <div class="pname">${esc(p.name)}${id===G.pid?' (أنا)':''}</div>
+        <div class="pstatus ${p.isReady?'r':''}">${p.isReady?'✓ جاهز':'غير جاهز'}</div>
+      </div>
+      ${G.isHost&&id!==G.pid?`<button class="btn btn-ghost btn-sm" onclick="kickPlayer('${id}')">طرد</button>`:''}
+    `;
+    grid.appendChild(div);
+  });
+  for(let i=list.length;i<maxP;i++){
+    const div=document.createElement('div');
+    div.className='pslot empty';
+    div.textContent='في الانتظار...';
+    grid.appendChild(div);
+  }
+  document.getElementById('lbl-count').textContent=`${list.length} / ${maxP} لاعبين`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SUBSCRIBE ROOM — الاشتراك بكل التغييرات
+═══════════════════════════════════════════════════════════ */
+function subscribeRoom(){
+  // Players
+  const playersRef=ref(`rooms/${G.roomCode}/players`);
+  const pfn=playersRef.on('value',snap=>{
+    const players=snap.val()||{};
+    if(!players[G.pid]&&G.roomCode){
+      // طُرد
+      notify('طردك المضيف','d',5000);
+      cleanup();show('home');return;
+    }
+    const room=rRef();
+    room.child('settings').get().then(ss=>{
+      const maxP=(ss.val()||{}).maxPlayers||6;
+      renderPlayers(players,maxP);
+    });
+    // تحقق من المضيف
+    rRef().child('hostId').get().then(hs=>{
+      if(hs.val()===G.pid&&!G.isHost){
+        G.isHost=true;setupLobbyUI();notify('أصبحت المضيف!','g');
+      }
+    });
+  });
+  G.listeners.push(()=>playersRef.off('value',pfn));
+
+  // Phase
+  const phRef=ref(`rooms/${G.roomCode}/phase`);
+  const phfn=phRef.on('value',snap=>{
+    const phase=snap.val();
+    if(!phase)return;
+    handlePhaseChange(phase);
+  });
+  G.listeners.push(()=>phRef.off('value',phfn));
+
+  // Settings
+  const setRef=ref(`rooms/${G.roomCode}/settings`);
+  const setfn=setRef.on('value',snap=>{
+    const s=snap.val();
+    if(!s)return;
+    if(G.isHost){
+      document.getElementById('set-max').value=s.maxPlayers||6;
+      document.getElementById('set-night').value=s.nightDuration||45;
+      document.getElementById('set-day').value=s.dayDuration||60;
+    }
+  });
+  G.listeners.push(()=>setRef.off('value',setfn));
+
+  // Chat (day)
+  const chatRef=ref(`rooms/${G.roomCode}/chat`);
+  const chatfn=chatRef.on('child_added',snap=>{
+    const m=snap.val();
+    if(m)addChatMsg(m);
+  });
+  G.listeners.push(()=>chatRef.off('child_added',chatfn));
+
+  // Night actions result for detective
+  const detRef=ref(`rooms/${G.roomCode}/detectiveResult/${G.pid}`);
+  const detfn=detRef.on('value',snap=>{
+    const res=snap.val();
+    if(!res)return;
+    const div=document.getElementById('night-action-result');
+    if(div){
+      div.innerHTML=`<div class="det-res ${res.result}">${res.resultArabic} — ${esc(res.targetName)}</div>`;
+    }
+    notify(`نتيجة التحقيق: ${res.targetName} — ${res.resultArabic}`,'i',6000);
+  });
+  G.listeners.push(()=>detRef.off('value',detfn));
+
+  // Vote tally
+  const tallyRef=ref(`rooms/${G.roomCode}/voteTally`);
+  const tallyfn=tallyRef.on('value',snap=>{
+    const tally=snap.val()||{};
+    updateTallyUI(tally);
+  });
+  G.listeners.push(()=>tallyRef.off('value',tallyfn));
+
+  // Mafia target sync (for mafia team)
+  const mafTRef=ref(`rooms/${G.roomCode}/nightActions/mafiaTarget`);
+  const maffn=mafTRef.on('value',snap=>{
+    const tid=snap.val();
+    if(G.role!=='mafia'||!tid)return;
+    document.querySelectorAll('.tbtn').forEach(b=>{
+      b.classList.toggle('sel',b.dataset.tid===tid);
+    });
+  });
+  G.listeners.push(()=>mafTRef.off('value',maffn));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE HANDLER
+═══════════════════════════════════════════════════════════ */
+async function handlePhaseChange(phase){
+  if(phase==='lobby'){
+    show('lobby');return;
+  }
+  if(phase==='role_reveal'){
+    await loadMyRole();
+    show('role');return;
+  }
+  if(phase.startsWith('night')){
+    const round=parseInt(phase.split('_')[1])||1;
+    await startNightUI(round);return;
+  }
+  if(phase.startsWith('dawn')){
+    await showDawn();return;
+  }
+  if(phase.startsWith('day')){
+    const round=parseInt(phase.split('_')[1])||1;
+    await startDayUI(round);return;
+  }
+  if(phase.startsWith('voting')){
+    const round=parseInt(phase.split('_')[1])||1;
+    await startVotingUI(round);return;
+  }
+  if(phase==='end'){
+    await showEndScreen();return;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOBBY ACTIONS
+═══════════════════════════════════════════════════════════ */
+async function toggleReady(){
+  G.isReady=!G.isReady;
+  await ref(`rooms/${G.roomCode}/players/${G.pid}/isReady`).set(G.isReady);
+  document.getElementById('btn-ready').textContent=G.isReady?'✗ إلغاء الجاهزية':'✓ جاهز';
+  document.getElementById('btn-ready').className=G.isReady?'btn btn-ghost':'btn btn-red';
+}
+
+function pushSettings(){
+  if(!G.isHost)return;
+  ref(`rooms/${G.roomCode}/settings`).set({
+    maxPlayers:parseInt(document.getElementById('set-max').value),
+    nightDuration:parseInt(document.getElementById('set-night').value),
+    dayDuration:parseInt(document.getElementById('set-day').value),
+    voteDuration:30
+  });
+}
+
+async function kickPlayer(targetId){
+  if(!G.isHost)return;
+  await ref(`rooms/${G.roomCode}/players/${targetId}`).remove();
+}
+
+async function leaveRoom(){
+  await ref(`rooms/${G.roomCode}/players/${G.pid}`).remove();
+  // إذا المضيف غادر، انقل الصلاحية
+  if(G.isHost){
+    const snap=await ref(`rooms/${G.roomCode}/players`).get();
+    const players=snap.val()||{};
+    const ids=Object.keys(players);
+    if(ids.length>0){
+      await ref(`rooms/${G.roomCode}/hostId`).set(ids[0]);
+      await ref(`rooms/${G.roomCode}/players/${ids[0]}/isHost`).set(true);
+    }
+  }
+  cleanup();show('home');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   START GAME — المضيف فقط
+═══════════════════════════════════════════════════════════ */
+async function startGame(){
+  const snap=await ref(`rooms/${G.roomCode}/players`).get();
+  const players=snap.val()||{};
+  const ids=Object.keys(players);
+  if(ids.length<4){notify('تحتاج 4 لاعبين على الأقل','d');return;}
+
+  const settings=(await ref(`rooms/${G.roomCode}/settings`).get()).val();
+  const dist=DIST[ids.length]||DIST[6];
+
+  // بناء قائمة الأدوار
+  let roles=[];
+  roles.push(...Array(dist.mafia).fill('mafia'));
+  roles.push(...Array(dist.detective).fill('detective'));
+  roles.push(...Array(dist.doctor).fill('doctor'));
+  roles.push(...Array(dist.citizen).fill('citizen'));
+
+  // خلط Fisher-Yates
+  for(let i=roles.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [roles[i],roles[j]]=[roles[j],roles[i]];
+  }
+
+  // حفظ الأدوار
+  const roleMap={};
+  const mafiaIds=[];
+  ids.forEach((id,i)=>{
+    roleMap[id]=roles[i];
+    if(roles[i]==='mafia')mafiaIds.push(id);
+  });
+
+  await ref(`rooms/${G.roomCode}/roles`).set(roleMap);
+  await ref(`rooms/${G.roomCode}/mafiaTeam`).set(mafiaIds);
+  await ref(`rooms/${G.roomCode}/round`).set(1);
+
+  // إعادة تعيين اللاعبين
+  for(const id of ids){
+    await ref(`rooms/${G.roomCode}/players/${id}/isAlive`).set(true);
+    await ref(`rooms/${G.roomCode}/players/${id}/score`).set(0);
+    await ref(`rooms/${G.roomCode}/players/${id}/acked`).set(false);
+  }
+
+  await ref(`rooms/${G.roomCode}/phase`).set('role_reveal');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROLE REVEAL
+═══════════════════════════════════════════════════════════ */
+let cardFlipped=false;
+
+async function loadMyRole(){
+  const roleSnap=await ref(`rooms/${G.roomCode}/roles/${G.pid}`).get();
+  G.role=roleSnap.val()||'citizen';
+  G.isAlive=true;
+
+  cardFlipped=false;
+  document.getElementById('rcard').classList.remove('flip');
+  document.getElementById('btn-ack').style.display='none';
+  document.getElementById('btn-ack').disabled=false;
+  document.getElementById('btn-ack').textContent='فهمت دوري ←';
+  document.getElementById('flip-hint').textContent='اضغط على البطاقة لكشف دورك';
+  document.getElementById('mteam-sec').style.display='none';
+
+  document.getElementById('rface').setAttribute('data-r',G.role);
+  const imgEl=document.getElementById('rico');
+  imgEl.src=EMOJIS[G.role]||'';
+  document.getElementById('rname').textContent=ARABIC[G.role]||G.role;
+  document.getElementById('rflav').textContent=FLAVORS[G.role]||'';
+
+  // فريق المافيا
+  if(G.role==='mafia'){
+    const msnap=await ref(`rooms/${G.roomCode}/mafiaTeam`).get();
+    const mids=msnap.val()||[];
+    const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+    const pls=psnap.val()||{};
+    const mnames=mids.map(id=>pls[id]?.name).filter(Boolean);
+    document.getElementById('mteam-list').innerHTML=mnames.map(n=>`<span class="mmate">${esc(n)}</span>`).join('');
+  }
+}
+
+function flipCard(){
+  if(cardFlipped)return;
+  cardFlipped=true;
+  document.getElementById('rcard').classList.add('flip');
+  document.getElementById('flip-hint').textContent='دورك في هذه الجولة';
+  if(G.role==='mafia'){document.getElementById('mteam-sec').style.display='block';}
+  setTimeout(()=>{document.getElementById('btn-ack').style.display='block';},2000);
+}
+
+async function ackRole(){
+  document.getElementById('btn-ack').disabled=true;
+  document.getElementById('btn-ack').textContent='⌛ في انتظار بقية اللاعبين...';
+  await ref(`rooms/${G.roomCode}/players/${G.pid}/acked`).set(true);
+
+  // المضيف يتحقق إذا اكتمل الجميع
+  if(G.isHost){
+    const snap=await ref(`rooms/${G.roomCode}/players`).get();
+    const pls=snap.val()||{};
+    const allAcked=Object.values(pls).every(p=>p.acked);
+    if(allAcked){
+      const roundSnap=await ref(`rooms/${G.roomCode}/round`).get();
+      const round=roundSnap.val()||1;
+      setTimeout(async()=>{
+        await ref(`rooms/${G.roomCode}/nightActions`).remove();
+        await ref(`rooms/${G.roomCode}/phase`).set(`night_${round}`);
+      },1500);
+    } else {
+      // مراقبة حتى يكمل الجميع
+      const ackedRef=ref(`rooms/${G.roomCode}/players`);
+      const checkFn=ackedRef.on('value',async ss=>{
+        const pl=ss.val()||{};
+        if(Object.values(pl).every(p=>p.acked)){
+          ackedRef.off('value',checkFn);
+          const r2=(await ref(`rooms/${G.roomCode}/round`).get()).val()||1;
+          setTimeout(async()=>{
+            await ref(`rooms/${G.roomCode}/nightActions`).remove();
+            await ref(`rooms/${G.roomCode}/phase`).set(`night_${r2}`);
+          },1500);
+        }
+      });
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NIGHT PHASE
+═══════════════════════════════════════════════════════════ */
+async function startNightUI(round){
+  stopTimer();
+  document.getElementById('night-round').textContent=`الجولة ${round}`;
+
+  const settSnap=await ref(`rooms/${G.roomCode}/settings`).get();
+  const dur=(settSnap.val()||{}).nightDuration||45;
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const allPlayers=Object.entries(psnap.val()||{});
+  const alive=allPlayers.filter(([,p])=>p.isAlive);
+
+  // تحديث حالتي
+  const myP=psnap.val()||{};
+  G.isAlive=myP[G.pid]?.isAlive??true;
+
+  buildNightContent(alive.map(([id,p])=>({id,name:p.name})));
+  show('night');
+  notify(G.isAlive?'حلّ الظلام... قم بدورك الليلة':'أنت ميت — شاهد بصمت','i');
+
+  startTimer('night-timer',dur,async()=>{
+    if(G.isHost)await resolveNight(round);
+  });
+}
+
+function buildNightContent(alive){
+  const cont=document.getElementById('night-content');
+  const role=G.role;
+
+  if(!G.isAlive){
+    cont.innerHTML=`<div class="spec-box"><span style="font-size:2.5rem;display:block;margin-bottom:8px">👁</span><p>أنت ميت — شاهد بصمت ما يجري</p></div>`;
+    return;
+  }
+
+  const cfg={
+    mafia:    {c:'var(--red2)',  a:'المافيا',  act:'اختر من تريد استهدافه:'},
+    detective:{c:'var(--blue)', a:'المحقق',   act:'اختر من تريد التحقيق معه:'},
+    doctor:   {c:'var(--green)',a:'الطبيب',   act:'اختر من تريد حمايته:'},
+    citizen:  {c:'var(--silver)',a:'المواطن', act:null}
+  }[role]||{c:'var(--silver)',a:'المواطن',act:null};
+
+  if(role==='citizen'){
+    cont.innerHTML=`<div class="night-panel"><div class="np-lbl">دورك</div>
+      <div class="np-role" style="color:${cfg.c}">${EMOJIS[role]} ${cfg.a}</div>
+      <div class="spec-box" style="padding:14px"><p>لا دور لك الليلة — انتظر النهار</p></div></div>`;
+    return;
+  }
+
+  const targets=alive.filter(p=>p.id!==G.pid);
+  const tHTML=targets.map(p=>`
+    <button class="tbtn" data-tid="${p.id}" onclick="doNightAction('${p.id}',this)">
+      <div class="tav">👤</div><span>${esc(p.name)}</span>
+    </button>`).join('');
+
+  cont.innerHTML=`<div class="night-panel">
+    <div class="np-lbl">دورك هذه الليلة</div>
+    <div class="np-role" style="color:${cfg.c}">${EMOJIS[role]} ${cfg.a}</div>
+    <div class="np-act">${cfg.act}</div>
+    <div class="tlist">${tHTML}</div>
+    <div id="night-action-result"></div>
+  </div>`;
+}
+
+async function doNightAction(targetId,btn){
+  const evMap={mafia:'mafiaTarget',detective:'detectiveTarget',doctor:'doctorTarget'};
+  const key=evMap[G.role];
+  if(!key)return;
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  await ref(`rooms/${G.roomCode}/nightActions/${key}`).set(targetId);
+  notify('تم تسجيل اختيارك ✓','s');
+
+  // المحقق يحصل على نتيجته فوراً
+  if(G.role==='detective'){
+    const roleSnap=await ref(`rooms/${G.roomCode}/roles/${targetId}`).get();
+    const tr=roleSnap.val();
+    const isMafia=tr==='mafia';
+    const res={
+      targetName:(await ref(`rooms/${G.roomCode}/players/${targetId}/name`).get()).val(),
+      result:isMafia?'mafia':'innocent',
+      resultArabic:isMafia?'⚠️ مافيا!':'✅ بريء'
+    };
+    await ref(`rooms/${G.roomCode}/detectiveResult/${G.pid}`).set(res);
+    if(isMafia){
+      const sc=(await ref(`rooms/${G.roomCode}/players/${G.pid}/score`).get()).val()||0;
+      await ref(`rooms/${G.roomCode}/players/${G.pid}/score`).set(sc+50);
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESOLVE NIGHT — المضيف فقط
+═══════════════════════════════════════════════════════════ */
+async function resolveNight(round){
+  stopTimer();
+  const actSnap=await ref(`rooms/${G.roomCode}/nightActions`).get();
+  const acts=actSnap.val()||{};
+  const mafTgt=acts.mafiaTarget||null;
+  const docTgt=acts.doctorTarget||null;
+
+  let killed=null;
+  if(mafTgt&&mafTgt!==docTgt){
+    // ضحية
+    await ref(`rooms/${G.roomCode}/players/${mafTgt}/isAlive`).set(false);
+    const nm=(await ref(`rooms/${G.roomCode}/players/${mafTgt}/name`).get()).val();
+    killed={id:mafTgt,name:nm};
+    // نقاط المافيا
+    const msnap=await ref(`rooms/${G.roomCode}/mafiaTeam`).get();
+    const mids=msnap.val()||[];
+    for(const mid of mids){
+      const sc=(await ref(`rooms/${G.roomCode}/players/${mid}/score`).get()).val()||0;
+      await ref(`rooms/${G.roomCode}/players/${mid}/score`).set(sc+30);
+    }
+  } else if(mafTgt&&mafTgt===docTgt){
+    // الطبيب أنقذ — نقاط الطبيب
+    const rmap=(await ref(`rooms/${G.roomCode}/roles`).get()).val()||{};
+    const docId=Object.keys(rmap).find(id=>rmap[id]==='doctor');
+    if(docId){
+      const sc=(await ref(`rooms/${G.roomCode}/players/${docId}/score`).get()).val()||0;
+      await ref(`rooms/${G.roomCode}/players/${docId}/score`).set(sc+75);
+    }
+  }
+
+  await ref(`rooms/${G.roomCode}/dawnResult`).set({
+    killed,
+    saved: !killed && mafTgt && mafTgt===docTgt ? true : false,
+    message:killed
+      ?`استيقظ الجميع ووجدوا ${killed.name} ميتاً...`
+      :'ليلة آمنة... لم يمت أحد.'
+  });
+
+  // فحص الفوز
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=psnap.val()||{};
+  const rmap=(await ref(`rooms/${G.roomCode}/roles`).get()).val()||{};
+  const win=checkWin(pls,rmap);
+  if(win){
+    await ref(`rooms/${G.roomCode}/winResult`).set(win);
+    await ref(`rooms/${G.roomCode}/phase`).set('end');
+    return;
+  }
+
+  await ref(`rooms/${G.roomCode}/phase`).set(`dawn_${round}`);
+  setTimeout(async()=>{
+    await ref(`rooms/${G.roomCode}/phase`).set(`day_${round}`);
+  },4000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DAWN
+═══════════════════════════════════════════════════════════ */
+async function showDawn(){
+  stopTimer();
+  const snap=await ref(`rooms/${G.roomCode}/dawnResult`).get();
+  const res=snap.val()||{};
+  const killed=res.killed;
+
+  document.getElementById('dawn-ico').textContent=killed?'💀':'🌅';
+  document.getElementById('dawn-title').textContent=killed?'شهيد الليل':'ليلة آمنة';
+  document.getElementById('dawn-title').className=`dawn-title ${killed?'dawn-k':'dawn-s'}`;
+  document.getElementById('dawn-msg').textContent=res.message||'';
+
+  if(killed){
+    document.getElementById('victim-name').textContent=killed.name;
+    document.getElementById('dawn-victim').style.display='block';
+    if(killed.id===G.pid){G.isAlive=false;notify('لقد مُتَّ هذه الليلة! ستتابع كمتفرج','d',6000);}
+  } else {
+    document.getElementById('dawn-victim').style.display='none';
+  }
+
+  show('dawn');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DAY PHASE
+═══════════════════════════════════════════════════════════ */
+async function startDayUI(round){
+  stopTimer();
+  document.getElementById('day-round').textContent=`الجولة ${round}`;
+  document.getElementById('chat-msgs').innerHTML=`<div class="cmsg sys"><div class="ctext">بدأت جلسة النقاش — من المافيا بينكم؟</div></div>`;
+
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=Object.entries(psnap.val()||{});
+  G.isAlive=(psnap.val()||{})[G.pid]?.isAlive??true;
+
+  document.getElementById('day-plist').innerHTML=pls.map(([id,p])=>`
+    <div class="dpi ${p.isAlive?'':'dead'}">
+      <div class="dot"></div>${esc(p.name)}${id===G.pid?' 👤':''}
+    </div>`).join('');
+
+  document.getElementById('chat-row').style.display=G.isAlive?'flex':'none';
+
+  const settSnap=await ref(`rooms/${G.roomCode}/settings`).get();
+  const dur=(settSnap.val()||{}).dayDuration||60;
+
+  // مسح دردشة قديمة
+  await ref(`rooms/${G.roomCode}/chat`).remove();
+
+  show('day');
+  startTimer('day-timer',dur,async()=>{
+    if(G.isHost){
+      await ref(`rooms/${G.roomCode}/votes`).remove();
+      await ref(`rooms/${G.roomCode}/voteTally`).remove();
+      const rSnap=await ref(`rooms/${G.roomCode}/round`).get();
+      await ref(`rooms/${G.roomCode}/phase`).set(`voting_${rSnap.val()||round}`);
+    }
+  });
+}
+
+/* ─── Chat ─────────────────────────────────────── */
+async function sendMsg(){
+  const inp=document.getElementById('chat-inp');
+  const msg=inp.value.trim();
+  if(!msg||!G.isAlive)return;
+  inp.value='';
+  await ref(`rooms/${G.roomCode}/chat`).push({
+    pid:G.pid,name:G.name,msg,t:Date.now()
+  });
+}
+function addChatMsg(m){
+  const c=document.getElementById('chat-msgs');
+  const isOwn=m.pid===G.pid;
+  const isSys=m.sys;
+  const div=document.createElement('div');
+  div.className=`cmsg ${isOwn?'own':''} ${isSys?'sys':''}`;
+  if(isSys){div.innerHTML=`<div class="ctext">${m.msg}</div>`;}
+  else{div.innerHTML=`<span class="cauthor">${isOwn?'أنا':esc(m.name)}</span><div class="ctext">${esc(m.msg)}</div>`;}
+  c.appendChild(div);c.scrollTop=c.scrollHeight;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const ci=document.getElementById('chat-inp');
+    if(document.activeElement===ci)sendMsg();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   VOTING
+═══════════════════════════════════════════════════════════ */
+async function startVotingUI(round){
+  stopTimer();
+  G.myVote=null;
+  document.getElementById('vote-msg').textContent='';
+  document.getElementById('vprog-t').textContent='0 / 0 صوّتوا';
+  document.getElementById('pfill').style.width='0%';
+
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=psnap.val()||{};
+  G.isAlive=pls[G.pid]?.isAlive??true;
+  const alive=Object.entries(pls).filter(([,p])=>p.isAlive);
+
+  document.getElementById('vcands').innerHTML=alive.map(([id,p])=>`
+    <div class="vcand" id="vc-${id}" onclick="castVote('${id}',this)">
+      <div class="vcav">👤</div>
+      <span class="vcname">${esc(p.name)}${id===G.pid?' (أنا)':''}</span>
+      <span class="vcvotes" id="vcv-${id}">—</span>
+    </div>`).join('');
+
+  if(!G.isAlive){
+    document.getElementById('vcands').style.opacity='.4';
+    document.getElementById('vcands').style.pointerEvents='none';
+    document.getElementById('btn-abstain').style.display='none';
+  }
+
+  const settSnap=await ref(`rooms/${G.roomCode}/settings`).get();
+  const dur=(settSnap.val()||{}).voteDuration||30;
+  show('vote');
+  notify('صوّت الآن — من تريد إقصاءه؟','i');
+
+  startTimer('vote-timer',dur,async()=>{
+    if(G.isHost)await resolveVoting(round);
+  });
+}
+
+async function abstainVote(){
+  if(!G.isAlive)return;
+  // إلغاء صوت سابق إن وجد
+  if(G.myVote){
+    await ref(`rooms/${G.roomCode}/voteTally/${G.myVote}`).transaction(v=>Math.max(0,(v||1)-1));
+    await ref(`rooms/${G.roomCode}/votes/${G.pid}`).remove();
+    G.myVote=null;
+  }
+  // تسجيل عدم التصويت في Firebase
+  await ref(`rooms/${G.roomCode}/votes/${G.pid}`).set('abstain');
+  document.querySelectorAll('.vcand').forEach(v=>v.classList.remove('voted'));
+  document.getElementById('vote-msg').textContent='اخترت عدم التصويت 🚫';
+  document.getElementById('btn-abstain').style.background='rgba(212,43,58,.15)';
+  document.getElementById('btn-abstain').style.borderColor='rgba(212,43,58,.4)';
+}
+
+async function castVote(targetId,el){
+  if(!G.isAlive)return;
+
+  // إلغاء صوت سابق
+  if(G.myVote&&G.myVote!==targetId){
+    await ref(`rooms/${G.roomCode}/voteTally/${G.myVote}`).transaction(v=>(v||1)-1);
+  }
+  G.myVote=targetId;
+  await ref(`rooms/${G.roomCode}/votes/${G.pid}`).set(targetId);
+  await ref(`rooms/${G.roomCode}/voteTally/${targetId}`).transaction(v=>(v||0)+1);
+  document.getElementById('vote-msg').textContent='تم تسجيل صوتك ✓';
+  document.querySelectorAll('.vcand').forEach(v=>v.classList.remove('voted'));
+  el.classList.add('voted');
+  // إعادة تصميم زر "لا أصوت"
+  const ab=document.getElementById('btn-abstain');
+  if(ab){ab.style.background='';ab.style.borderColor='';}
+}
+
+function updateTallyUI(tally){
+  const allAlive=document.querySelectorAll('.vcand').length;
+  const totalVotes=Object.values(tally).reduce((a,b)=>a+b,0);
+  const maxV=Math.max(0,...Object.values(tally));
+
+  document.getElementById('vprog-t').textContent=`${totalVotes} / ${allAlive} صوّتوا`;
+  document.getElementById('pfill').style.width=allAlive?`${totalVotes/allAlive*100}%`:'0%';
+
+  Object.entries(tally).forEach(([id,c])=>{
+    const el=document.getElementById(`vcv-${id}`);
+    const vc=document.getElementById(`vc-${id}`);
+    if(el){el.textContent=c;el.className=`vcvotes ${c>0?'hv':''}`;}
+    if(vc){vc.classList.toggle('lead',c>0&&c===maxV);}
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESOLVE VOTING — المضيف فقط
+═══════════════════════════════════════════════════════════ */
+async function resolveVoting(round){
+  stopTimer();
+  const tallySnap=await ref(`rooms/${G.roomCode}/voteTally`).get();
+  const tally=tallySnap.val()||{};
+
+  let maxV=0,tops=[];
+  Object.entries(tally).forEach(([id,c])=>{
+    if(c>maxV){maxV=c;tops=[id];}
+    else if(c===maxV)tops.push(id);
+  });
+
+  const wasTie=tops.length!==1||maxV===0;
+  let eliminated=null;
+
+  if(!wasTie){
+    const elimId=tops[0];
+    await ref(`rooms/${G.roomCode}/players/${elimId}/isAlive`).set(false);
+    const nm=(await ref(`rooms/${G.roomCode}/players/${elimId}/name`).get()).val();
+    const rl=(await ref(`rooms/${G.roomCode}/roles/${elimId}`).get()).val();
+    eliminated={id:elimId,name:nm,role:rl,roleArabic:ARABIC[rl]||rl};
+
+    // نقاط من صوّت صح على المافيا
+    if(rl==='mafia'){
+      const votesSnap=await ref(`rooms/${G.roomCode}/votes`).get();
+      const votes=votesSnap.val()||{};
+      for(const [vid,tid] of Object.entries(votes)){
+        if(tid===elimId){
+          const sc=(await ref(`rooms/${G.roomCode}/players/${vid}/score`).get()).val()||0;
+          await ref(`rooms/${G.roomCode}/players/${vid}/score`).set(sc+25);
+        }
+      }
+    }
+  }
+
+  const msg=wasTie?'تعادل الأصوات — لا أحد يُقصى اليوم!'
+    :`تم إقصاء ${eliminated.name} — كان ${eliminated.roleArabic}!`;
+
+  await ref(`rooms/${G.roomCode}/voteResult`).set({eliminated,wasTie,message:msg});
+  notify(msg,eliminated?'d':'i',5000);
+
+  // فحص الفوز
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=psnap.val()||{};
+  const rmap=(await ref(`rooms/${G.roomCode}/roles`).get()).val()||{};
+  const win=checkWin(pls,rmap);
+
+  if(win){
+    await ref(`rooms/${G.roomCode}/winResult`).set(win);
+    await ref(`rooms/${G.roomCode}/phase`).set('end');
+    return;
+  }
+
+  const newRound=round+1;
+  await ref(`rooms/${G.roomCode}/round`).set(newRound);
+
+  // إعادة تعيين أصوات المحقق
+  await ref(`rooms/${G.roomCode}/detectiveResult`).remove();
+
+  setTimeout(async()=>{
+    await ref(`rooms/${G.roomCode}/players`).get().then(async ss=>{
+      const pls2=ss.val()||{};
+      for(const id of Object.keys(pls2)){
+        await ref(`rooms/${G.roomCode}/players/${id}/acked`).set(false);
+      }
+    });
+    await ref(`rooms/${G.roomCode}/nightActions`).remove();
+    await ref(`rooms/${G.roomCode}/chat`).remove();
+    await ref(`rooms/${G.roomCode}/votes`).remove();
+    await ref(`rooms/${G.roomCode}/voteTally`).remove();
+    await ref(`rooms/${G.roomCode}/phase`).set(`night_${newRound}`);
+  },4000);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WIN CHECK
+═══════════════════════════════════════════════════════════ */
+function checkWin(players,roles){
+  const alive=Object.entries(players).filter(([,p])=>p.isAlive);
+  const aliveMafia=alive.filter(([id])=>roles[id]==='mafia');
+  const aliveCivil=alive.filter(([id])=>roles[id]!=='mafia');
+  if(aliveMafia.length===0)return{winner:'civilians',winnerArabic:'🎉 فاز المواطنون!'};
+  if(aliveMafia.length>=aliveCivil.length)return{winner:'mafia',winnerArabic:'💀 فازت المافيا!'};
+  return null;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   END SCREEN
+═══════════════════════════════════════════════════════════ */
+async function showEndScreen(){
+  stopTimer();
+  const winSnap=await ref(`rooms/${G.roomCode}/winResult`).get();
+  const win=winSnap.val()||{winner:'mafia',winnerArabic:'💀 فازت المافيا!'};
+
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=psnap.val()||{};
+  const rmap=(await ref(`rooms/${G.roomCode}/roles`).get()).val()||{};
+  const roundSnap=await ref(`rooms/${G.roomCode}/round`).get();
+  const round=roundSnap.val()||1;
+
+  document.getElementById('win-banner').textContent=win.winnerArabic;
+  document.getElementById('win-banner').className=`win-banner ${win.winner==='mafia'?'wm':'wc'}`;
+  document.getElementById('win-sub').textContent=`بعد ${round} جولة`;
+
+  const ranks=['g','s','b'];
+  const badgeClass={mafia:'bm',detective:'bd',doctor:'bdr',citizen:'bc'};
+  const sorted=Object.entries(pls).sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+
+  document.getElementById('scoreb').innerHTML=sorted.map(([id,p],i)=>`
+    <div class="srow">
+      <span class="srank ${ranks[i]||''}">${i+1}</span>
+      <span class="sname">${esc(p.name)}${id===G.pid?' 👤':''}</span>
+      <span class="sbadge ${badgeClass[rmap[id]]||'bc'}">${ARABIC[rmap[id]]||'؟'}</span>
+      ${!p.isAlive?'<span class="sdead">💀</span>':''}
+      <span class="spts">${p.score||0}</span>
+    </div>`).join('');
+
+  if(G.isHost)document.getElementById('btn-newgame').style.display='inline-flex';
+  const isWinner=(win.winner==='mafia'&&G.role==='mafia')||(win.winner==='civilians'&&G.role!=='mafia');
+  notify(isWinner?'🎉 '+win.winnerArabic:win.winnerArabic,isWinner?'s':'d',7000);
+  show('end');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW GAME & HOME
+═══════════════════════════════════════════════════════════ */
+async function newGame(){
+  if(!G.isHost)return;
+  await ref(`rooms/${G.roomCode}/winResult`).remove();
+  await ref(`rooms/${G.roomCode}/dawnResult`).remove();
+  await ref(`rooms/${G.roomCode}/voteResult`).remove();
+  await ref(`rooms/${G.roomCode}/roles`).remove();
+  await ref(`rooms/${G.roomCode}/nightActions`).remove();
+  await ref(`rooms/${G.roomCode}/chat`).remove();
+  await ref(`rooms/${G.roomCode}/votes`).remove();
+  await ref(`rooms/${G.roomCode}/voteTally`).remove();
+  await ref(`rooms/${G.roomCode}/detectiveResult`).remove();
+  await ref(`rooms/${G.roomCode}/mafiaTeam`).remove();
+  await ref(`rooms/${G.roomCode}/round`).set(1);
+
+  const psnap=await ref(`rooms/${G.roomCode}/players`).get();
+  const pls=psnap.val()||{};
+  for(const id of Object.keys(pls)){
+    await ref(`rooms/${G.roomCode}/players/${id}`).update({isReady:false,isAlive:true,score:0,acked:false});
+  }
+
+  G.role=null;G.myVote=null;G.isAlive=true;G.isReady=false;
+  document.getElementById('btn-newgame').style.display='none';
+  setupLobbyUI();
+  await ref(`rooms/${G.roomCode}/phase`).set('lobby');
+}
+
+function goHome(){
+  leaveRoom();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CLEANUP
+═══════════════════════════════════════════════════════════ */
+function cleanup(){
+  stopTimer();
+  G.listeners.forEach(fn=>fn());
+  G.listeners=[];
+  G.roomCode=null;G.isHost=false;G.role=null;G.myVote=null;G.isAlive=true;G.isReady=false;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loading').classList.add('hide');
+    show('home');
+  },800);
+});
+
+// Enter key support
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const active=document.querySelector('.screen.on')?.id;
+  if(active==='s-home'){
+    const tab=document.querySelector('.tab.on')?.textContent;
+    if(tab?.includes('إنشاء'))createRoom();else joinRoom();
+  }
+});
+</script>
+</body>
+</html>
