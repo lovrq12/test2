@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RIP IS BACK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#000;overflow:hidden;cursor:none}
+
+#canvas-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+
+/* Blood drip overlay */
+#blood-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none}
+
+/* Title 3D */
+#title-container{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:10;text-align:center;
+  opacity:0;
+  perspective:800px;
+}
+#title-3d{
+  font-family:'Cinzel',serif;
+  font-size:clamp(42px,7vw,90px);
+  font-weight:900;
+  color:#cc0000;
+  letter-spacing:0.15em;
+  line-height:1;
+  transform:rotateX(20deg) rotateY(-5deg);
+  transform-style:preserve-3d;
+  text-shadow:
+    2px 2px 0 #800000,
+    4px 4px 0 #600000,
+    6px 6px 0 #400000,
+    8px 8px 0 #300000,
+    0 0 40px #ff0000,
+    0 0 80px #aa0000,
+    0 0 120px #660000;
+  -webkit-text-stroke: 1px #ff2200;
+  animation: titleFloat 4s ease-in-out infinite;
+}
+#subtitle{
+  font-family:'Cinzel',serif;
+  font-size:clamp(11px,1.6vw,18px);
+  color:#880000;
+  letter-spacing:0.6em;
+  margin-top:18px;
+  text-transform:uppercase;
+  opacity:0;
+  text-shadow:0 0 20px #ff0000;
+}
+#mafia-label{
+  font-family:'Cinzel',serif;
+  font-size:clamp(9px,1.2vw,13px);
+  color:#444;
+  letter-spacing:0.4em;
+  margin-top:30px;
+  text-transform:uppercase;
+  opacity:0;
+}
+
+@keyframes titleFloat{
+  0%,100%{transform:rotateX(20deg) rotateY(-5deg) translateY(0)}
+  50%{transform:rotateX(18deg) rotateY(5deg) translateY(-6px)}
+}
+
+/* Vignette */
+#vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.95) 100%);
+  z-index:5;pointer-events:none;
+}
+
+/* Blood drips SVG canvas */
+#blood-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none}
+
+/* Scanlines */
+#scanlines{
+  position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.08) 3px,rgba(0,0,0,0.08) 4px);
+}
+
+/* Moon glow */
+#moon{
+  position:absolute;top:8%;left:50%;transform:translateX(-50%);
+  width:80px;height:80px;
+  background:radial-gradient(circle, #ffffff 30%, rgba(255,255,255,0.4) 60%, transparent 100%);
+  border-radius:50%;z-index:4;
+  box-shadow:0 0 40px 20px rgba(255,255,255,0.15);
+  opacity:0;
+}
+
+/* Flash */
+#flash{position:absolute;inset:0;background:#ff0000;opacity:0;z-index:20;pointer-events:none}
+#blackout{position:absolute;inset:0;background:#000;opacity:1;z-index:25;pointer-events:none;transition:opacity 1.5s}
+
+/* Skip button */
+#skip{
+  position:absolute;bottom:30px;right:30px;z-index:30;
+  color:rgba(180,0,0,0.5);font-family:'Cinzel',serif;font-size:12px;
+  letter-spacing:2px;cursor:pointer;pointer-events:all;
+  transition:color 0.3s;
+}
+#skip:hover{color:rgba(255,0,0,0.9)}
+
+/* Progress bar */
+#progress-bar{
+  position:absolute;bottom:0;left:0;height:2px;
+  background:linear-gradient(90deg,#cc0000,#ff4400);
+  z-index:30;width:0%;transition:width 0.1s linear;
+}
+
+/* Particle canvas */
+#particle-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div id="blackout"></div>
+<canvas id="canvas-bg"></canvas>
+<canvas id="particle-canvas"></canvas>
+<canvas id="blood-canvas"></canvas>
+
+<div id="moon"></div>
+<div id="vignette"></div>
+<div id="scanlines"></div>
+
+<div id="title-container">
+  <div id="title-3d">RIP IS BACK</div>
+  <div id="subtitle">ᴍᴀꜰɪᴀ — ᴛʜᴇ ʀᴇᴛᴜʀɴ</div>
+  <div id="mafia-label">press any key to enter</div>
+</div>
+
+<div id="flash"></div>
+<div id="progress-bar"></div>
+<div id="skip" onclick="skipIntro()">SKIP ›</div>
+
+<!-- 
+  =============================================
+  لإضافة الموسيقى: ضع ملف الـ mp3 في نفس المجلد
+  وغيّر اسم الملف في السطر التالي
+  =============================================
+-->
+<audio id="bgmusic" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const W=window.innerWidth,H=window.innerHeight;
+
+// ===== STAR BACKGROUND =====
+const bgCanvas=document.getElementById('canvas-bg');
+bgCanvas.width=W;bgCanvas.height=H;
+const bgCtx=bgCanvas.getContext('2d');
+
+const stars=[];
+for(let i=0;i<600;i++){
+  stars.push({
+    x:Math.random()*W,y:Math.random()*H*0.75,
+    r:Math.random()*1.8+0.2,
+    a:Math.random(),
+    speed:Math.random()*0.008+0.002,
+    twinkle:Math.random()*Math.PI*2
+  });
+}
+
+function drawStars(time){
+  bgCtx.clearRect(0,0,W,H);
+  bgCtx.fillStyle='#000';
+  bgCtx.fillRect(0,0,W,H);
+  
+  // Gradient sky
+  const skyGrad=bgCtx.createLinearGradient(0,0,0,H*0.75);
+  skyGrad.addColorStop(0,'#000000');
+  skyGrad.addColorStop(0.5,'#050005');
+  skyGrad.addColorStop(1,'#0a0005');
+  bgCtx.fillStyle=skyGrad;
+  bgCtx.fillRect(0,0,W,H*0.75);
+
+  // Stars
+  stars.forEach(s=>{
+    s.twinkle+=s.speed;
+    const alpha=s.a*(0.6+0.4*Math.sin(s.twinkle));
+    bgCtx.beginPath();
+    bgCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    bgCtx.fillStyle=`rgba(255,255,255,${alpha})`;
+    bgCtx.fill();
+  });
+
+  // Ground / clouds (bottom)
+  const groundGrad=bgCtx.createLinearGradient(0,H*0.65,0,H);
+  groundGrad.addColorStop(0,'transparent');
+  groundGrad.addColorStop(0.3,'rgba(15,5,5,0.8)');
+  groundGrad.addColorStop(1,'rgba(5,0,0,1)');
+  bgCtx.fillStyle=groundGrad;
+  bgCtx.fillRect(0,H*0.65,W,H*0.35);
+
+  // Cloud shapes
+  bgCtx.fillStyle='rgba(20,10,10,0.9)';
+  drawCloud(bgCtx,W*0.1,H*0.72,200,60);
+  drawCloud(bgCtx,W*0.55,H*0.74,280,70);
+  drawCloud(bgCtx,W*0.8,H*0.71,180,50);
+  drawCloud(bgCtx,W*0.3,H*0.76,220,55);
+
+  // Silhouette ground
+  bgCtx.fillStyle='#000';
+  bgCtx.beginPath();
+  bgCtx.moveTo(0,H*0.82);
+  bgCtx.bezierCurveTo(W*0.1,H*0.78,W*0.2,H*0.80,W*0.3,H*0.79);
+  bgCtx.bezierCurveTo(W*0.4,H*0.78,W*0.5,H*0.82,W*0.6,H*0.80);
+  bgCtx.bezierCurveTo(W*0.7,H*0.78,W*0.8,H*0.83,W*0.9,H*0.81);
+  bgCtx.lineTo(W,H*0.82);
+  bgCtx.lineTo(W,H);bgCtx.lineTo(0,H);bgCtx.closePath();
+  bgCtx.fill();
+
+  // Sword silhouette (bottom right like the image)
+  drawSword(bgCtx,W*0.82,H*0.77);
+}
+
+function drawCloud(ctx,x,y,w,h){
+  ctx.beginPath();
+  ctx.ellipse(x,y,w/2,h/2,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x+w*0.2,y-h*0.2,w*0.4,h*0.4,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x-w*0.15,y-h*0.15,w*0.35,h*0.35,0,0,Math.PI*2);ctx.fill();
+}
+
+function drawSword(ctx,x,y){
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,0.95)';
+  ctx.strokeStyle='rgba(50,20,20,0.8)';
+  ctx.lineWidth=1;
+  // Blade
+  ctx.beginPath();
+  ctx.moveTo(x,y-120);
+  ctx.lineTo(x-4,y+20);
+  ctx.lineTo(x+4,y+20);
+  ctx.closePath();ctx.fill();ctx.stroke();
+  // Guard
+  ctx.beginPath();
+  ctx.moveTo(x-25,y+20);ctx.lineTo(x+25,y+20);
+  ctx.lineTo(x+22,y+30);ctx.lineTo(x-22,y+30);
+  ctx.closePath();ctx.fill();ctx.stroke();
+  // Handle
+  ctx.beginPath();
+  ctx.rect(x-5,y+30,10,40);ctx.fill();ctx.stroke();
+  ctx.restore();
+}
+
+// ===== BLOOD DRIPS =====
+const bloodCanvas=document.getElementById('blood-canvas');
+bloodCanvas.width=W;bloodCanvas.height=H;
+const bCtx=bloodCanvas.getContext('2d');
+
+const drips=[];
+let dripsActive=false;
+
+function addDrip(){
+  const x=W/2+( Math.random()-0.5)*200;
+  drips.push({
+    x:x, y:H*0.25,
+    len:0, speed:1.5+Math.random()*2,
+    maxLen:60+Math.random()*80,
+    w:1.5+Math.random()*2,
+    drop:null, dropY:0, dropR:0
+  });
+}
+
+function updateDrips(){
+  bCtx.clearRect(0,0,W,H);
+  drips.forEach(d=>{
+    if(d.len<d.maxLen){
+      d.len+=d.speed;
+    } else if(!d.drop){
+      d.drop=true;
+      d.dropY=H*0.25+d.len;
+      d.dropR=d.w*2;
+    }
+    // Draw drip
+    const grad=bCtx.createLinearGradient(d.x,H*0.25,d.x,H*0.25+d.len);
+    grad.addColorStop(0,'rgba(180,0,0,0.9)');
+    grad.addColorStop(1,'rgba(120,0,0,0.7)');
+    bCtx.beginPath();
+    bCtx.moveTo(d.x-d.w/2,H*0.25);
+    bCtx.lineTo(d.x+d.w/2,H*0.25);
+    bCtx.lineTo(d.x+d.w/2,H*0.25+d.len);
+    bCtx.lineTo(d.x-d.w/2,H*0.25+d.len);
+    bCtx.fillStyle=grad;
+    bCtx.fill();
+    // Teardrop at end
+    if(d.drop){
+      bCtx.beginPath();
+      bCtx.arc(d.x,d.dropY,d.dropR,0,Math.PI*2);
+      bCtx.fillStyle='rgba(150,0,0,0.8)';
+      bCtx.fill();
+    }
+  });
+}
+
+// ===== PARTICLE SYSTEM (ash/embers) =====
+const pCanvas=document.getElementById('particle-canvas');
+pCanvas.width=W;pCanvas.height=H;
+const pCtx=pCanvas.getContext('2d');
+
+const particles=[];
+function spawnParticle(){
+  particles.push({
+    x:Math.random()*W,
+    y:H,
+    vx:(Math.random()-0.5)*0.5,
+    vy:-(0.3+Math.random()*0.8),
+    size:Math.random()*2+0.5,
+    alpha:Math.random()*0.6+0.2,
+    color:Math.random()>0.7?'255,50,50':'200,200,200',
+    life:1
+  });
+}
+
+function updateParticles(){
+  pCtx.clearRect(0,0,W,H);
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;
+    p.life-=0.003;p.alpha*=0.998;
+    if(p.life<=0||p.y<-10){particles.splice(i,1);continue;}
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    pCtx.fillStyle=`rgba(${p.color},${p.alpha*p.life})`;
+    pCtx.fill();
+  }
+}
+
+// ===== AUDIO (Web Audio fallback + mp3) =====
+const audio=document.getElementById('bgmusic');
+let AC,audioStarted=false;
+
+function tryPlayMP3(){
+  if(audio.src&&!audio.src.endsWith('intro.html')){
+    audio.volume=0.7;
+    audio.play().catch(()=>{});
+  }
+}
+
+function startWebAudio(){
+  if(audioStarted)return;
+  audioStarted=true;
+  tryPlayMP3();
+  try{
+    AC=new(window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    const now=AC.currentTime;
+    makeDarkBass(now+0.5);
+    makeDarkBass(now+3.0);
+    makeDarkBass(now+6.0);
+    makeRiser(now+7.5);
+    makeDarkBass(now+10.0,1.2);
+    makeHeartbeat(now+1.0);
+  }catch(e){}
+}
+
+function makeDarkBass(time,vol=0.8){
+  try{
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(55,time);
+    o.frequency.exponentialRampToValueAtTime(15,time+1.2);
+    g.gain.setValueAtTime(vol,time);
+    g.gain.exponentialRampToValueAtTime(0.001,time+1.3);
+    o.connect(g);g.connect(AC.destination);
+    o.start(time);o.stop(time+1.4);
+  }catch(e){}
+}
+
+function makeRiser(time){
+  try{
+    const o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
+    o.type='sawtooth';
+    o.frequency.setValueAtTime(40,time);
+    o.frequency.exponentialRampToValueAtTime(300,time+3.5);
+    f.type='lowpass';
+    f.frequency.setValueAtTime(100,time);
+    f.frequency.linearRampToValueAtTime(1500,time+3.5);
+    g.gain.setValueAtTime(0,time);
+    g.gain.linearRampToValueAtTime(0.25,time+2.5);
+    g.gain.linearRampToValueAtTime(0,time+3.5);
+    o.connect(f);f.connect(g);g.connect(AC.destination);
+    o.start(time);o.stop(time+3.6);
+  }catch(e){}
+}
+
+function makeHeartbeat(time){
+  try{
+    for(let i=0;i<8;i++){
+      const t=time+i*1.2;
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='sine';o.frequency.value=40;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(0.4,t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.3);
+      o.connect(g);g.connect(AC.destination);
+      o.start(t);o.stop(t+0.35);
+      const o2=AC.createOscillator(),g2=AC.createGain();
+      o2.type='sine';o2.frequency.value=35;
+      g2.gain.setValueAtTime(0,t+0.15);
+      g2.gain.linearRampToValueAtTime(0.3,t+0.2);
+      g2.gain.exponentialRampToValueAtTime(0.001,t+0.45);
+      o2.connect(g2);g2.connect(AC.destination);
+      o2.start(t+0.15);o2.stop(t+0.5);
+    }
+  }catch(e){}
+}
+
+document.addEventListener('click',startWebAudio,{once:true});
+document.addEventListener('keydown',startWebAudio,{once:true});
+
+// ===== TIMELINE ANIMATION =====
+const flashEl=document.getElementById('flash');
+const titleCont=document.getElementById('title-container');
+const subtitle=document.getElementById('subtitle');
+const mafiaLabel=document.getElementById('mafia-label');
+const moonEl=document.getElementById('moon');
+const blackout=document.getElementById('blackout');
+const progressBar=document.getElementById('progress-bar');
+
+const TOTAL_DURATION=16000; // 16 seconds then go to game
+let startTime=null;
+let introFinished=false;
+
+const timeline=[
+  {at:0,    fn:()=>{ blackout.style.opacity='0'; }},
+  {at:800,  fn:()=>{ moonEl.style.cssText+=';opacity:1;transition:opacity 2s'; }},
+  {at:1500, fn:()=>{ dripsActive=true; addDrip(); }},
+  {at:2200, fn:()=>{ addDrip(); addDrip(); }},
+  {at:3000, fn:()=>{ addDrip(); }},
+  {at:3500, fn:()=>{ flashEl.style.opacity='0.6'; setTimeout(()=>flashEl.style.cssText+=';opacity:0;transition:opacity 0.4s',80); }},
+  {at:3600, fn:()=>{
+    titleCont.style.cssText+=';opacity:0;transition:opacity 1.2s';
+    titleCont.style.opacity='1';
+  }},
+  {at:5000, fn:()=>{ subtitle.style.cssText+=';opacity:1;transition:opacity 1s'; }},
+  {at:6500, fn:()=>{ addDrip();addDrip();addDrip(); }},
+  {at:8000, fn:()=>{ mafiaLabel.style.cssText+=';opacity:1;transition:opacity 1.5s'; }},
+  {at:9000, fn:()=>{ flashEl.style.opacity='0.3'; setTimeout(()=>flashEl.style.cssText+=';opacity:0;transition:opacity 0.6s',60); }},
+  {at:TOTAL_DURATION-1500, fn:()=>{
+    blackout.style.cssText+=';opacity:1;transition:opacity 1.5s';
+  }},
+  {at:TOTAL_DURATION, fn:()=>{ goToGame(); }},
+];
+
+let firedEvents=new Set();
+
+function tick(ts){
+  if(!startTime)startTime=ts;
+  const elapsed=ts-startTime;
+
+  // Progress bar
+  progressBar.style.width=Math.min(100,elapsed/TOTAL_DURATION*100)+'%';
+
+  // Fire timeline events
+  timeline.forEach((ev,i)=>{
+    if(!firedEvents.has(i)&&elapsed>=ev.at){
+      firedEvents.add(i);
+      ev.fn();
+    }
+  });
+
+  // Draw
+  drawStars(elapsed);
+  if(dripsActive)updateDrips();
+  updateParticles();
+  if(Math.random()<0.04)spawnParticle();
+
+  if(!introFinished)requestAnimationFrame(tick);
+}
+
+function goToGame(){
+  if(introFinished)return;
+  introFinished=true;
+  if(audio)audio.pause();
+  window.location.href='index.html';
+}
+
+function skipIntro(){
+  blackout.style.cssText+=';opacity:1;transition:opacity 0.5s';
+  setTimeout(goToGame,500);
+}
+
+// Any key skips
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='Enter'){
+    skipIntro();
+  }
+});
+
+// Start
+setTimeout(()=>{
+  requestAnimationFrame(tick);
+  startWebAudio();
+},100);
+
+window.addEventListener('resize',()=>{
+  bgCanvas.width=pCanvas.width=bloodCanvas.width=window.innerWidth;
+  bgCanvas.height=pCanvas.height=bloodCanvas.height=window.innerHeight;
+});
+</script>
+</body>
+</html>
