@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mafia — Social Deduction Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="theme.css"/>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<div id="toast-wrap"></div>
+
+<div class="page">
+
+  <!-- Brand -->
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="font-size:3rem;margin-bottom:8px;">🎭</div>
+    <h1 class="accent">Mafia</h1>
+    <p class="muted" style="margin-top:4px;">Real-time social deduction game</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Nickname -->
+    <div class="form-group">
+      <label class="label">Your nickname</label>
+      <input type="text" id="display-name" placeholder="Enter a name…"
+             maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-create" onclick="switchTab('create')">Create room</button>
+      <button class="tab-btn"        id="tab-join"   onclick="switchTab('join')">Join room</button>
+    </div>
+
+    <!-- CREATE -->
+    <div id="panel-create" class="tab-panel active">
+
+      <div class="form-group">
+        <label class="label">Max players</label>
+        <div class="range-row">
+          <input type="range" id="max-players" min="4" max="16" step="1" value="8"
+                 oninput="document.getElementById('max-players-val').textContent=this.value"/>
+          <span class="range-val" id="max-players-val">8</span>
+        </div>
+      </div>
+
+      <div class="settings-box" style="margin-bottom:16px;">
+        <span class="label" style="margin-bottom:14px;">Timer settings</span>
+
+        <div class="form-group">
+          <label class="label">🌙 Night phase</label>
+          <div class="range-row">
+            <input type="range" id="night-dur" min="30" max="60" step="5" value="45"
+                   oninput="document.getElementById('night-dur-val').textContent=this.value+'s'"/>
+            <span class="range-val" id="night-dur-val">45s</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">💬 Discussion</label>
+          <div class="range-row">
+            <input type="range" id="discuss-dur" min="30" max="300" step="15" value="120"
+                   oninput="document.getElementById('discuss-dur-val').textContent=this.value+'s'"/>
+            <span class="range-val" id="discuss-dur-val">120s</span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="label">🗳️ Voting</label>
+          <div class="range-row">
+            <input type="range" id="vote-dur" min="30" max="120" step="15" value="60"
+                   oninput="document.getElementById('vote-dur-val').textContent=this.value+'s'"/>
+            <span class="range-val" id="vote-dur-val">60s</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-box" style="margin-bottom:16px;">
+        <span class="label" style="margin-bottom:14px;">Optional roles</span>
+        <div class="toggle-row">
+          <span class="toggle-label">🔍 Detective</span>
+          <label class="toggle">
+            <input type="checkbox" id="role-detective" checked/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">💊 Doctor</span>
+          <label class="toggle">
+            <input type="checkbox" id="role-doctor" checked/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-create" onclick="handleCreate()">
+        Create room
+      </button>
+    </div>
+
+    <!-- JOIN -->
+    <div id="panel-join" class="tab-panel">
+      <div class="form-group">
+        <label class="label">Room code</label>
+        <input type="text" id="room-code-input" placeholder="e.g. WOLF42"
+               maxlength="6" autocomplete="off" autocorrect="off" autocapitalize="characters"
+               spellcheck="false"
+               oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"
+               onkeydown="if(event.key==='Enter')handleJoin()"/>
+      </div>
+      <button class="btn btn-primary" id="btn-join" onclick="handleJoin()">
+        Join room
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script src="constants.js"></script>
+<script src="firebase-init.js"></script>
+<script src="rooms.js"></script>
+<script>
+  // Tab switching
+  function switchTab(name) {
+    ["create","join"].forEach(t => {
+      document.getElementById("tab-"+t).classList.toggle("active", t===name);
+      document.getElementById("panel-"+t).classList.toggle("active", t===name);
+    });
+  }
+
+  // Toast
+  function showToast(msg, type="info", ms=3500) {
+    const wrap  = document.getElementById("toast-wrap");
+    const toast = document.createElement("div");
+    toast.className = "toast " + type;
+    toast.textContent = msg;
+    wrap.appendChild(toast);
+    setTimeout(() => toast.remove(), ms);
+  }
+
+  // Button loading state
+  function setLoading(btnId, loading, label) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading ? '<span class="spinner"></span> Loading…' : label;
+  }
+
+  // Pre-fill saved name
+  const savedName = localStorage.getItem("mafia_name");
+  if (savedName) document.getElementById("display-name").value = savedName;
+
+  // Create room
+  async function handleCreate() {
+    const name = document.getElementById("display-name").value.trim();
+    if (!name) { showToast("Enter a nickname first.", "error"); return; }
+
+    setLoading("btn-create", true, "Create room");
+    const settings = {
+      maxPlayers:      +document.getElementById("max-players").value,
+      nightDuration:   +document.getElementById("night-dur").value,
+      discussDuration: +document.getElementById("discuss-dur").value,
+      votingDuration:  +document.getElementById("vote-dur").value,
+      rolesEnabled: {
+        detective: document.getElementById("role-detective").checked,
+        doctor:    document.getElementById("role-doctor").checked
+      }
+    };
+
+    try {
+      const code = await createRoom(name, settings);
+      showToast("Room " + code + " created!", "success", 1500);
+      setTimeout(() => { window.location.href = "lobby.html?room=" + code; }, 900);
+    } catch(e) {
+      showToast(e.message, "error");
+      setLoading("btn-create", false, "Create room");
+    }
+  }
+
+  // Join room
+  async function handleJoin() {
+    const name = document.getElementById("display-name").value.trim();
+    const code = document.getElementById("room-code-input").value.trim().toUpperCase();
+    if (!name) { showToast("Enter a nickname first.", "error"); return; }
+    if (code.length !== 6) { showToast("Room codes are 6 characters.", "error"); return; }
+
+    setLoading("btn-join", true, "Join room");
+    try {
+      await joinRoom(code, name);
+      showToast("Joining " + code + "…", "success", 1500);
+      setTimeout(() => { window.location.href = "lobby.html?room=" + code; }, 900);
+    } catch(e) {
+      showToast(e.message, "error");
+      setLoading("btn-join", false, "Join room");
+    }
+  }
+</script>
+</body>
+</html>
