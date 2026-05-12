@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مستري بوكس</title>
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body class="home-page">
+  <main class="home-shell">
+    <section class="home-hero" aria-labelledby="game-title">
+      <div class="brand-mark">MB</div>
+      <h1 id="game-title">مستري بوكس</h1>
+      <p>غرفة تحقيق، صندوق غامض، ولاعب واحد تعرف الحقيقة عيناه فقط.</p>
+    </section>
+
+    <section class="entry-panel" aria-label="الدخول إلى اللعبة">
+      <form id="entryForm" class="entry-form">
+        <label class="field">
+          <span>اسم اللاعب</span>
+          <input id="playerName" type="text" maxlength="18" autocomplete="nickname" placeholder="اكتب اسمك" required>
+        </label>
+
+        <div class="skin-picker" aria-label="اختيار السكن">
+          <button class="skin-card is-selected" type="button" data-skin="player01" aria-pressed="true">
+            <span class="skin-figure skin-one"></span>
+            <strong>اللاعب 1</strong>
+          </button>
+          <button class="skin-card" type="button" data-skin="player02" aria-pressed="false">
+            <span class="skin-figure skin-two"></span>
+            <strong>اللاعب 2</strong>
+          </button>
+        </div>
+
+        <div class="actions-grid">
+          <button id="createRoomBtn" class="primary-action" type="submit" data-action="create">إنشاء غرفة</button>
+          <label class="field invite-field">
+            <span>كود الدعوة</span>
+            <input id="inviteCode" type="text" maxlength="8" autocomplete="off" placeholder="A7KQ2">
+          </label>
+          <button id="joinRoomBtn" class="secondary-action" type="button">انضمام للغرفة</button>
+        </div>
+      </form>
+      <p id="homeStatus" class="status-line" role="status"></p>
+    </section>
+  </main>
+
+  <div class="ambient-vignette" aria-hidden="true"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/rooms.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

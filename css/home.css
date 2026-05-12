@@ -1,0 +1,140 @@
+.home-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.home-shell {
+  width: min(1120px, 100%);
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 440px);
+  align-items: center;
+  gap: clamp(22px, 5vw, 70px);
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero {
+  display: grid;
+  gap: 18px;
+}
+
+.brand-mark {
+  width: 74px;
+  height: 74px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(214, 170, 87, 0.42);
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, rgba(214, 170, 87, 0.18), rgba(196, 71, 71, 0.12)),
+    rgba(255, 255, 255, 0.04);
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.home-hero h1 {
+  font-size: clamp(3rem, 8vw, 7.4rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.home-hero p {
+  color: var(--muted);
+  max-width: 560px;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.8;
+}
+
+.entry-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(14, 16, 19, 0.9);
+  box-shadow: var(--shadow);
+  padding: clamp(18px, 3vw, 28px);
+  backdrop-filter: blur(18px);
+}
+
+.entry-form {
+  display: grid;
+  gap: 18px;
+}
+
+.skin-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.skin-card {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.skin-card.is-selected {
+  border-color: rgba(214, 170, 87, 0.75);
+  background: rgba(214, 170, 87, 0.12);
+}
+
+.skin-figure {
+  width: 46px;
+  height: 62px;
+  border-radius: 20px 20px 8px 8px;
+  display: block;
+  position: relative;
+  background: linear-gradient(180deg, #5e8fc8, #1f3554);
+}
+
+.skin-figure::before {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  top: -18px;
+  left: 9px;
+  background: #d7bd99;
+}
+
+.skin-two {
+  background: linear-gradient(180deg, #c44747, #502020);
+}
+
+.actions-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.invite-field {
+  margin-top: 4px;
+}
+
+.ambient-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45), transparent 42%, rgba(0, 0, 0, 0.55)),
+    radial-gradient(circle at 50% 100%, rgba(196, 71, 71, 0.14), transparent 28rem);
+}
+
+@media (max-width: 860px) {
+  .home-page {
+    place-items: start center;
+  }
+
+  .home-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(3.1rem, 18vw, 5.5rem);
+  }
+}
