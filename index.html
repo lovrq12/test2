@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مستري بوكس</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body class="home-page">
+
+  <div class="home-noise"></div>
+
+  <!-- Loading -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <span class="loading-text">جارٍ التحميل...</span>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast-container"></div>
+
+  <div class="home-container">
+
+    <!-- الشعار -->
+    <div class="home-logo">
+      <span class="logo-icon">📦</span>
+      <h1>مستري بوكس</h1>
+      <p class="subtitle">لعبة الخداع والاستجواب</p>
+    </div>
+
+    <!-- البطاقة -->
+    <div class="home-card">
+
+      <!-- الاسم -->
+      <div class="form-group">
+        <label class="form-label" for="player-name">اسمك في اللعبة</label>
+        <input type="text" id="player-name" placeholder="اكتب اسمك..." maxlength="20" autocomplete="off">
+      </div>
+
+      <!-- اختيار السكن -->
+      <div class="form-group">
+        <label class="form-label">اختر شخصيتك</label>
+        <div class="skin-selector">
+          <div class="skin-option active" data-skin="skin1">
+            <span class="skin-emoji">🕵️</span>
+            <span class="skin-name">المحقق</span>
+          </div>
+          <div class="skin-option" data-skin="skin2">
+            <span class="skin-emoji">🥷</span>
+            <span class="skin-name">الخصم</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- إنشاء غرفة -->
+      <button id="btn-create" class="btn btn-primary btn-full btn-lg">
+        ➕ إنشاء غرفة
+      </button>
+
+      <div class="divider">أو انضم لغرفة</div>
+
+      <!-- الانضمام -->
+      <div class="join-section">
+        <input type="text" id="join-code" placeholder="كود الغرفة (مثال: A7KQ2)" maxlength="6" autocomplete="off">
+        <button id="btn-join" class="btn btn-blue">انضم</button>
+      </div>
+
+      <div id="error-msg" class="error-msg"></div>
+
+    </div>
+
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <!-- اللعبة -->
+  <script src="js/firebase-init.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/rooms.js"></script>
+  <script src="js/home.js"></script>
+
+</body>
+</html>

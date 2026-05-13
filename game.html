@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مستري بوكس — المباراة</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body class="game-page">
+
+  <!-- Three.js Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Toast -->
+  <div id="toast-container"></div>
+
+  <!-- Loading -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <span class="loading-text">جارٍ تحميل الغرفة...</span>
+  </div>
+
+  <!-- ===== UI Overlay ===== -->
+  <div id="game-ui">
+
+    <!-- الشريط العلوي -->
+    <div id="game-header">
+      <div class="match-info">
+        <div class="match-players">
+          <span id="match-name-a" class="match-player-name">—</span>
+          <span class="match-vs">VS</span>
+          <span id="match-name-b" class="match-player-name">—</span>
+        </div>
+        <div id="match-score" class="match-score">0 : 0</div>
+        <div id="match-timer" class="match-timer">—</div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="btn-leave" class="btn btn-sm btn-secondary">🚪 مغادرة</button>
+      </div>
+    </div>
+
+    <!-- المنتصف — الغرض السري + قرارات -->
+    <div id="game-center">
+
+      <!-- بطاقة الغرض السرية (لصاحب الصندوق فقط) -->
+      <div id="secret-item-card" class="hidden">
+        <div class="card-label">الغرض في الصندوق</div>
+        <div id="secret-emoji" style="font-size:2.5rem;margin:8px 0"></div>
+        <div id="secret-name" class="item-name"></div>
+        <div id="secret-hints" class="item-hints"></div>
+        <span id="secret-mode-badge" class="mode-badge"></span>
+      </div>
+
+    </div>
+
+    <!-- المنتصف السفلي — منطقة الإجراءات -->
+    <div id="game-bottom">
+      <div id="investigation-area">
+
+        <!-- اختيار الوضع — لصاحب الصندوق -->
+        <div id="panel-choose-mode" class="hidden" style="text-align:center;padding:20px">
+          <div style="color:var(--text-dim);font-size:0.85rem;margin-bottom:12px;letter-spacing:0.08em">
+            الغرض في صندوقك:
+          </div>
+          <div id="choose-item-emoji" style="font-size:3rem;display:block;margin-bottom:6px"></div>
+          <div id="choose-item-name" style="font-size:1.4rem;font-weight:800;color:var(--gold);margin-bottom:20px"></div>
+          <div style="color:var(--white);font-size:0.9rem;margin-bottom:16px">اختر كيف ستلعب:</div>
+          <div class="choice-buttons">
+            <button id="btn-choose-truth" class="choice-btn truth">
+              🔵 صادق<br>
+              <span style="font-size:0.75rem;font-weight:400;margin-top:4px;display:block">أخبر الحقيقة</span>
+            </button>
+            <button id="btn-choose-lie" class="choice-btn lie">
+              🔴 كذاب<br>
+              <span style="font-size:0.75rem;font-weight:400;margin-top:4px;display:block">اخدع المحقق</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- انتظار -->
+        <div id="panel-waiting" class="hidden" style="text-align:center;padding:16px">
+          <div class="spinner" style="margin:0 auto 12px"></div>
+          <div id="waiting-msg" style="color:var(--text-dim);font-size:0.9rem"></div>
+        </div>
+
+        <!-- منطقة السؤال والجواب -->
+        <div id="panel-qa" class="hidden">
+          <div id="turn-label" class="turn-indicator"></div>
+          <div id="qa-log" class="qa-log"></div>
+
+          <!-- حقل السؤال (للمحقق) -->
+          <div id="qa-question-row" class="action-input-row hidden">
+            <input type="text" id="question-input" placeholder="اكتب سؤالك..." maxlength="200" autocomplete="off">
+            <button id="btn-send-question" class="btn btn-blue">إرسال 🔍</button>
+          </div>
+
+          <!-- حقل الجواب (لصاحب الصندوق) -->
+          <div id="qa-answer-row" class="action-input-row hidden">
+            <input type="text" id="answer-input" placeholder="اكتب جوابك..." maxlength="200" autocomplete="off">
+            <button id="btn-send-answer" class="btn btn-primary">إرسال 💬</button>
+          </div>
+        </div>
+
+        <!-- التخمين (للمحقق عند انتهاء الوقت) -->
+        <div id="panel-guessing" class="hidden" style="text-align:center;padding:12px">
+          <div style="color:var(--white);font-size:1rem;margin-bottom:14px;font-weight:600">
+            ⏰ انتهى الوقت — ماذا تعتقد؟
+          </div>
+          <div class="choice-buttons">
+            <button id="btn-guess-truth" class="choice-btn truth">
+              🔵 كان صادقًا
+            </button>
+            <button id="btn-guess-lie" class="choice-btn lie">
+              🔴 كان يكذب
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /game-ui -->
+
+  <!-- ===== الشريط الجانبي ===== -->
+  <div id="game-sidebar">
+
+    <!-- البركت -->
+    <div id="bracket-panel">
+      <h3>🏆 البطولة</h3>
+      <div id="bracket-list"></div>
+    </div>
+
+    <!-- الشات -->
+    <div id="game-chat">
+      <h3>💬 الشات</h3>
+      <div id="game-chat-messages" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="game-chat-input" placeholder="رسالة..." maxlength="200" autocomplete="off">
+        <button id="game-chat-send" class="btn btn-secondary btn-sm">→</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== Reveal Overlay ===== -->
+  <div id="reveal-overlay" class="hidden">
+    <div class="reveal-card">
+      <div id="reveal-emoji" class="reveal-box-icon"></div>
+      <div id="reveal-item-name" class="reveal-item-name"></div>
+      <div id="reveal-mode-text" class="reveal-mode" style="color:var(--text-dim)"></div>
+      <div id="reveal-guess-result" style="font-size:1rem;margin-top:8px"></div>
+      <div class="reveal-winner">
+        الفائز بالجولة: <span id="reveal-winner-name"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== نهاية البطولة ===== -->
+  <div id="tournament-end-overlay" class="hidden">
+    <div class="champion-card">
+      <span id="champion-skin" class="champion-trophy">🏆</span>
+      <div class="champion-title">بطل البطولة</div>
+      <div id="champion-name" class="champion-name"></div>
+      <div class="champion-subtitle">
+        انتهت البطولة — تهانينا للبطل!
+      </div>
+      <div style="margin-top:32px">
+        <a href="index.html" class="btn btn-gold btn-lg" onclick="localStorage.removeItem('mb_player')">
+          العودة للرئيسية
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Three.js r128 — آخر إصدار يدعم examples/js بدون ES modules ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <!-- اللعبة -->
+  <script src="js/firebase-init.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/rooms.js"></script>
+  <script src="js/tournament.js"></script>
+  <script src="js/game-state.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/3d/scene.js"></script>
+  <script src="js/3d/box.js"></script>
+  <script src="js/3d/characters.js"></script>
+  <script src="js/game.js"></script>
+
+</body>
+</html>
