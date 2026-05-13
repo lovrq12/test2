@@ -1,0 +1,172 @@
+/* home.css — شاشة الدخول */
+
+body.home-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at center, #1a0a0a 0%, #0a0a0a 70%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* خلفية ضبابية */
+body.home-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(192,57,43,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(41,128,185,0.04) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* نقاط زخرفية */
+.home-noise {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* الكونتينر الرئيسي */
+.home-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 460px;
+  padding: 24px 16px;
+}
+
+/* الشعار */
+.home-logo {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.home-logo .logo-icon {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 20px rgba(192,57,43,0.6));
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.home-logo h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0392b 50%, #d4a017 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.04em;
+  text-shadow: none;
+}
+
+.home-logo .subtitle {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-top: 6px;
+  letter-spacing: 0.08em;
+}
+
+/* البطاقة الرئيسية */
+.home-card {
+  background: rgba(24,24,24,0.92);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 32px 28px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(192,57,43,0.08);
+}
+
+/* حقول الإدخال */
+.form-group {
+  margin-bottom: 18px;
+}
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* اختيار السكن */
+.skin-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.skin-option {
+  flex: 1;
+  padding: 16px 10px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  background: var(--dark3);
+  position: relative;
+}
+
+.skin-option:hover { border-color: var(--gray2); background: var(--dark3); }
+
+.skin-option.active {
+  border-color: var(--red);
+  background: rgba(192,57,43,0.1);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.15);
+}
+
+.skin-option .skin-emoji {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.skin-option .skin-name {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.skin-option.active .skin-name { color: var(--white); }
+
+/* فاصل */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* قسم الانضمام */
+.join-section {
+  display: flex;
+  gap: 10px;
+}
+.join-section input { flex: 1; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
+
+/* رسائل الخطأ */
+.error-msg {
+  color: var(--red);
+  font-size: 0.85rem;
+  margin-top: 8px;
+  display: none;
+}
+.error-msg.show { display: block; }
