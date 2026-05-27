@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Red suspect portrait">
+  <defs>
+    <radialGradient id="bg" cx="54%" cy="20%" r="75%">
+      <stop offset="0" stop-color="#5d1423"/>
+      <stop offset=".58" stop-color="#15070d"/>
+      <stop offset="1" stop-color="#030204"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <path d="M72 512c22-118 88-184 184-184s162 66 184 184z" fill="#0d090e"/>
+  <path d="M164 224c0-84 38-138 92-138s92 54 92 138c0 78-42 128-92 128s-92-50-92-128z" fill="#9b6c5a"/>
+  <path d="M154 214c32-72 66-108 102-108s70 36 102 108c-4-92-44-152-102-152s-98 60-102 152z" fill="#080609"/>
+  <path d="M178 232c42-28 94-44 156-48-18-70-48-110-78-110-48 0-82 54-78 158z" fill="#10090d"/>
+  <path d="M198 260h44M272 260h44" stroke="#2c1018" stroke-width="10" stroke-linecap="round"/>
+  <path d="M220 324c24 16 48 16 72 0" stroke="#5f2f36" stroke-width="8" stroke-linecap="round"/>
+  <path d="M176 384l80 50 80-50 62 28v100H114V412z" fill="#15101a"/>
+  <path d="M100 116l64 24M412 116l-64 24" stroke="#cf2f48" stroke-opacity=".24" stroke-width="9" stroke-linecap="round"/>
+  <rect x="28" y="28" width="456" height="456" rx="82" fill="none" stroke="#cf2f48" stroke-opacity=".40" stroke-width="6"/>
+</svg>

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المحقق المخادع</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="cinematic.css">
+  <link rel="stylesheet" href="../../assets/shared/game-entry.css">
+</head>
+<body class="portal-detective portal-session" data-atmosphere="heavy-rain" data-screen="home">
+  <a class="portal-home-link" href="../../index.html">
+    <i data-lucide="house" aria-hidden="true"></i>
+    رجوع للرئيسية
+  </a>
+  <div id="atmosphere-root" class="atmosphere-root" aria-hidden="true">
+    <div class="atmo-skyline-layer"></div>
+    <canvas id="atmosphere-canvas" class="atmosphere-canvas"></canvas>
+    <div class="atmo-rain-glass"></div>
+    <div class="atmo-fog-layer atmo-fog-a"></div>
+    <div class="atmo-fog-layer atmo-fog-b"></div>
+    <div class="atmo-cloud-layer"></div>
+    <div class="atmo-lightning-flash"></div>
+    <div class="atmo-reflection-layer"></div>
+    <div class="atmo-vignette"></div>
+  </div>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">ملف سري</p>
+      <h1>المحقق المخادع</h1>
+    </div>
+    <button id="connection-chip" class="connection-chip is-loading" type="button" aria-live="polite">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="connection-chip-text">يتصل...</span>
+    </button>
+    <span id="global-timer" class="timer-chip" hidden>--:--</span>
+  </header>
+
+  <main class="app-shell">
+    <section id="screen-home" class="screen is-active" aria-labelledby="home-title">
+      <div class="home-dashboard">
+        <article class="home-panel home-hero-panel">
+          <div class="screen-heading">
+            <p class="eyebrow">قضية سرية</p>
+            <h2 id="home-title">المحقق المخادع</h2>
+            <p class="home-subtitle">كل الحقيقة... قد تكون أول كذبة</p>
+          </div>
+          <div class="action-grid">
+            <button id="show-create-button" class="primary-action" type="button">إنشاء غرفة</button>
+            <button id="show-join-button" class="secondary-action" type="button">دخول اللعبة</button>
+          </div>
+          <p id="home-message" class="form-message" role="status" aria-live="polite"></p>
+        </article>
+
+        <section class="home-panel atmosphere-showcase" aria-label="طقس المدينة">
+          <div class="panel-title-row">
+            <h3>طقس المدينة</h3>
+            <span class="count-pill">مباشر</span>
+          </div>
+          <p>ليلة طويلة فوق مدينة لا تنام؛ المطر، الضباب، والبرق يغيّرون مسار التحقيق بصمت.</p>
+          <div class="atmosphere-card-grid">
+            <article class="atmosphere-card is-thunder">
+              <span class="atmo-preview"></span>
+              <strong>عاصفة رعدية</strong>
+            </article>
+            <article class="atmosphere-card is-rain">
+              <span class="atmo-preview"></span>
+              <strong>مطر غزير</strong>
+            </article>
+            <article class="atmosphere-card is-fog">
+              <span class="atmo-preview"></span>
+              <strong>ضباب كثيف</strong>
+            </article>
+            <article class="atmosphere-card is-meteor">
+              <span class="atmo-preview"></span>
+              <strong>شهب</strong>
+            </article>
+            <article class="atmosphere-card is-snow">
+              <span class="atmo-preview"></span>
+              <strong>مدينة ثلجية</strong>
+            </article>
+            <article class="atmosphere-card is-neon">
+              <span class="atmo-preview"></span>
+              <strong>نيون ليلي</strong>
+            </article>
+          </div>
+        </section>
+
+        <aside class="home-panel brief-panel">
+          <div class="panel-title-row">
+            <h3>ملف القضية</h3>
+            <span class="count-pill">سري</span>
+          </div>
+          <ul class="home-bullet-list">
+            <li>مدينة تحت سيطرة عائلة مجهولة، وكل لاعب يحمل جزءاً من الحقيقة.</li>
+            <li>القاتل يختار أداتين، والطبيب الشرعي يحوّل الأدلة إلى تلميحات.</li>
+            <li>الشاهد يعرف أكثر مما يجب، والشريك يحمي القاتل بالكلام.</li>
+            <li>المحققون يقرؤون الأدوات، يربطون الخيوط، ثم يقررون من يكذب.</li>
+          </ul>
+          <p class="home-callout">القاعدة الأولى: لا تثق بالصوت الهادئ أكثر من اللازم.</p>
+        </aside>
+
+        <section class="home-panel role-showcase-panel">
+          <div class="panel-title-row">
+            <h3>بطاقات الأسرار</h3>
+            <span class="count-pill">لا تُكشف</span>
+          </div>
+          <div class="home-role-cards">
+            <article class="home-role-card is-killer">
+              <strong>القاتل</strong>
+              <p>يختار أداتين فقط ويحاول إخفاء الحقيقة.</p>
+            </article>
+            <article class="home-role-card is-accomplice">
+              <strong>الشريك</strong>
+              <p>يعرف القاتل فقط ويساعده بالخداع.</p>
+            </article>
+            <article class="home-role-card is-witness">
+              <strong>الشاهد</strong>
+              <p>يعرف القاتل والشريك دون معرفة الأدوات.</p>
+            </article>
+            <article class="home-role-card is-forensic">
+              <strong>الطبيب الشرعي</strong>
+              <p>يصنع التلميحات ويوجه التحقيق.</p>
+            </article>
+            <article class="home-role-card is-investigator">
+              <strong>المحقق</strong>
+              <p>يرى الأدوات والتلميحات ويحاول كشف القاتل.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="home-panel effects-panel">
+          <div class="panel-title-row">
+            <h3>علامات الليل</h3>
+            <span class="count-pill">خطر</span>
+          </div>
+          <ul class="effect-list">
+            <li>مطر يضرب زجاج غرفة التحقيق</li>
+            <li>ضباب يبتلع أطراف المدينة</li>
+            <li>شهب بعيدة فوق الأبراج السوداء</li>
+            <li>انعكاسات نيون تكشف الوجوه ثم تخفيها</li>
+          </ul>
+        </section>
+
+        <aside class="home-panel notes-panel">
+          <div class="panel-title-row">
+            <h3>تعليمات المحققين</h3>
+            <span class="count-pill">سري للغاية</span>
+          </div>
+          <ul class="home-bullet-list">
+            <li>راقب أدوات اللاعبين قبل أن تثق بكلماتهم.</li>
+            <li>التلميحات لا تقول الحقيقة كاملة؛ هي تفتح باب الشك فقط.</li>
+            <li>الصمت الطويل قد يكون دليلاً، وقد يكون فخاً.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section id="screen-create" class="screen" aria-labelledby="create-title" hidden>
+      <div class="screen-heading">
+        <p class="eyebrow">غرفة جديدة</p>
+        <h2 id="create-title">إعداد اللوبي</h2>
+      </div>
+      <form id="create-room-form" class="stacked-form">
+        <label>
+          <span>اسمك</span>
+          <input id="create-player-name" name="playerName" type="text" maxlength="24" autocomplete="name" required>
+        </label>
+        <label>
+          <span>ملف التحقيق</span>
+          <select id="create-profile-select" name="profileId"></select>
+        </label>
+        <label>
+          <span>لون الإطار</span>
+          <select id="create-glow-select" name="glowColor">
+            <option value="gold">ذهبي</option>
+            <option value="blue">أزرق</option>
+            <option value="green">أخضر</option>
+            <option value="red">أحمر</option>
+            <option value="violet">بنفسجي</option>
+            <option value="cyan">نيون أزرق</option>
+            <option value="amber">كهرماني</option>
+            <option value="steel">رمادي فولاذي</option>
+          </select>
+        </label>
+        <div id="create-profile-preview" class="profile-preview" aria-hidden="true"></div>
+        <label>
+          <span>عدد اللاعبين المطلوب</span>
+          <select id="create-required-player-count" name="requiredPlayerCount">
+            <option value="4">4 لاعبين</option>
+            <option value="5" selected>5 لاعبين</option>
+            <option value="6">6 لاعبين</option>
+            <option value="7">7 لاعبين</option>
+            <option value="8">8 لاعبين</option>
+            <option value="9">9 لاعبين</option>
+            <option value="10">10 لاعبين</option>
+          </select>
+        </label>
+        <label>
+          <span>مؤقت الجولة</span>
+          <select id="create-round-timer" name="roundTimerMinutes">
+            <option value="5">5 دقائق</option>
+            <option value="10" selected>10 دقائق</option>
+            <option value="15">15 دقيقة</option>
+            <option value="20">20 دقيقة</option>
+            <option value="0">بدون مؤقت</option>
+          </select>
+        </label>
+        <p id="create-message" class="form-message" role="alert"></p>
+        <button id="create-room-button" class="primary-action" type="submit">إنشاء الغرفة</button>
+        <button class="text-button" type="button" data-screen-target="home">رجوع</button>
+      </form>
+    </section>
+
+    <section id="screen-join" class="screen" aria-labelledby="join-title" hidden>
+      <div class="screen-heading">
+        <p class="eyebrow">انضمام</p>
+        <h2 id="join-title">ادخل كود الغرفة</h2>
+      </div>
+      <form id="join-room-form" class="stacked-form">
+        <label>
+          <span>كود الغرفة</span>
+          <input id="join-room-code" name="roomCode" type="text" maxlength="5" autocomplete="off" required>
+        </label>
+        <label>
+          <span>اسمك</span>
+          <input id="join-player-name" name="playerName" type="text" maxlength="24" autocomplete="name" required>
+        </label>
+        <label>
+          <span>ملف التحقيق</span>
+          <select id="join-profile-select" name="profileId"></select>
+        </label>
+        <label>
+          <span>لون الإطار</span>
+          <select id="join-glow-select" name="glowColor">
+            <option value="gold">ذهبي</option>
+            <option value="blue">أزرق</option>
+            <option value="green">أخضر</option>
+            <option value="red">أحمر</option>
+            <option value="violet">بنفسجي</option>
+            <option value="cyan">نيون أزرق</option>
+            <option value="amber">كهرماني</option>
+            <option value="steel">رمادي فولاذي</option>
+          </select>
+        </label>
+        <div id="join-profile-preview" class="profile-preview" aria-hidden="true"></div>
+        <p id="join-message" class="form-message" role="alert"></p>
+        <button id="join-room-button" class="primary-action" type="submit">دخول اللوبي</button>
+        <button class="text-button" type="button" data-screen-target="home">رجوع</button>
+      </form>
+    </section>
+
+    <section id="screen-lobby" class="screen lobby-screen" aria-labelledby="lobby-title" hidden>
+      <div class="room-hero">
+        <div>
+          <p class="eyebrow">كود الغرفة</p>
+          <h2 id="lobby-room-code" class="room-code">----</h2>
+        </div>
+        <p id="lobby-role-badge" class="host-badge">...</p>
+      </div>
+      <div id="lobby-message" class="lobby-message" role="status" aria-live="polite">بانتظار اللاعبين</div>
+
+      <section class="panel" aria-labelledby="players-title">
+        <div class="panel-title-row">
+          <h3 id="players-title">اللاعبون</h3>
+          <span id="player-count" class="count-pill">0</span>
+        </div>
+        <ul id="player-list" class="player-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="settings-title">
+        <div class="panel-title-row">
+          <h3 id="settings-title">إعدادات الجولة</h3>
+          <span class="count-pill">هوست</span>
+        </div>
+        <form id="host-settings-form" class="settings-grid">
+          <label>
+            <span>الحد الأدنى للاعبين</span>
+            <select id="lobby-required-player-count" name="requiredPlayerCount">
+              <option value="4">4 لاعبين</option>
+              <option value="5">5 لاعبين</option>
+              <option value="6">6 لاعبين</option>
+              <option value="7">7 لاعبين</option>
+              <option value="8">8 لاعبين</option>
+              <option value="9">9 لاعبين</option>
+              <option value="10">10 لاعبين</option>
+            </select>
+          </label>
+          <label>
+            <span>مؤقت الجولة</span>
+            <select id="lobby-round-timer" name="roundTimerMinutes">
+              <option value="5">5 دقائق</option>
+              <option value="10">10 دقائق</option>
+              <option value="15">15 دقيقة</option>
+              <option value="20">20 دقيقة</option>
+              <option value="0">بدون مؤقت</option>
+            </select>
+          </label>
+          <label class="checkbox-row">
+            <input id="lobby-auto-roles" name="autoRoleAssignment" type="checkbox" checked>
+            <span>توزيع الأدوار تلقائياً</span>
+          </label>
+          <label class="checkbox-row">
+            <input id="lobby-enable-witness" name="witnessEnabled" type="checkbox" checked>
+            <span>تفعيل الشاهد</span>
+          </label>
+          <label class="checkbox-row">
+            <input id="lobby-enable-accomplice" name="accompliceEnabled" type="checkbox" checked>
+            <span>تفعيل الشريك</span>
+          </label>
+          <label>
+            <span>الطبيب الشرعي</span>
+            <select id="lobby-forensic-player" name="forensicDoctorPlayerId"></select>
+          </label>
+          <label class="manual-role-field">
+            <span>القاتل اليدوي</span>
+            <select id="lobby-manual-killer" name="manualKillerId"></select>
+          </label>
+          <label class="manual-role-field">
+            <span>الشريك اليدوي</span>
+            <select id="lobby-manual-accomplice" name="manualAccompliceId"></select>
+          </label>
+          <label class="manual-role-field">
+            <span>الشاهد اليدوي</span>
+            <select id="lobby-manual-witness" name="manualWitnessId"></select>
+          </label>
+        </form>
+        <p id="settings-summary" class="settings-summary"></p>
+      </section>
+
+      <section id="host-control-panel" class="panel" aria-labelledby="host-controls-title" hidden>
+        <div class="panel-title-row">
+          <h3 id="host-controls-title">تحكم الهوست</h3>
+          <span class="count-pill">إدارة</span>
+        </div>
+        <div class="settings-grid">
+          <label>
+            <span>نقل الهوست إلى</span>
+            <select id="transfer-host-player"></select>
+          </label>
+          <button id="transfer-host-button" class="secondary-action" type="button">نقل الهوست</button>
+          <label>
+            <span>إخراج لاعب</span>
+            <select id="kick-player-select"></select>
+          </label>
+          <button id="kick-player-button" class="secondary-action danger-action" type="button">إخراج</button>
+        </div>
+      </section>
+
+      <div class="lobby-actions">
+        <button id="start-game-button" class="primary-action" type="button" hidden>توزيع الأدوار</button>
+        <button id="force-start-game-button" class="secondary-action" type="button" hidden>بدء إجباري</button>
+        <button id="restart-room-button" class="secondary-action" type="button" hidden>إعادة ضبط الغرفة</button>
+        <button id="leave-room-button" class="secondary-action" type="button">مغادرة الغرفة</button>
+      </div>
+    </section>
+
+    <section id="screen-roles" class="screen roles-screen" aria-labelledby="roles-title" hidden>
+      <div class="room-hero">
+        <div>
+          <p class="eyebrow">الأدوار</p>
+          <h2 id="roles-title">دورك السري</h2>
+        </div>
+        <p id="roles-room-code" class="host-badge">----</p>
+      </div>
+      <article id="role-reveal-card" class="role-card" aria-live="polite">
+        <h3 id="role-name">جاري التحميل...</h3>
+        <p id="role-description">انتظر بياناتك الخاصة.</p>
+        <dl id="role-private-details" class="role-details"></dl>
+      </article>
+      <section class="panel" aria-labelledby="own-tools-title">
+        <div class="panel-title-row">
+          <h3 id="own-tools-title">أدواتك الثمانية</h3>
+          <span class="count-pill">خاص</span>
+        </div>
+        <div id="own-tools-list" class="tools-row"></div>
+      </section>
+      <section class="panel" aria-labelledby="roles-players-title">
+        <div class="panel-title-row">
+          <h3 id="roles-players-title">أدوات اللاعبين العامة</h3>
+          <span id="roles-player-count" class="count-pill">0</span>
+        </div>
+        <ul id="roles-player-list" class="player-list"></ul>
+      </section>
+      <div id="roles-message" class="lobby-message" role="status" aria-live="polite"></div>
+      <div class="lobby-actions">
+        <button id="continue-choosing-button" class="primary-action" type="button" hidden>متابعة إلى اختيار أدوات القاتل</button>
+        <button id="roles-leave-room-button" class="secondary-action" type="button">مغادرة الغرفة</button>
+      </div>
+    </section>
+
+    <section id="screen-murder-setup" class="screen murder-screen" aria-labelledby="murder-setup-title" hidden>
+      <div class="room-hero">
+        <div>
+          <p class="eyebrow">اختيار القاتل</p>
+          <h2 id="murder-setup-title">اختيار أداتين فقط</h2>
+        </div>
+        <p id="murder-room-code" class="host-badge">----</p>
+      </div>
+      <div id="murder-status-banner" class="phase-status" role="status" aria-live="polite"></div>
+      <article id="murder-private-card" class="role-card murder-private-card" aria-live="polite">
+        <p id="murder-private-label" class="role-emoji">بيانات خاصة</p>
+        <h3 id="murder-private-title">انتظار البيانات...</h3>
+        <p id="murder-private-description">ستظهر هنا التفاصيل المسموح لك فقط برؤيتها.</p>
+        <dl id="murder-private-details" class="role-details"></dl>
+      </article>
+      <section class="panel" aria-labelledby="murder-tools-title">
+        <div class="panel-title-row">
+          <h3 id="murder-tools-title">أدواتك</h3>
+          <span class="count-pill">خاص</span>
+        </div>
+        <div id="murder-weapon-card" class="tools-row"></div>
+      </section>
+      <form id="murder-setup-form" class="panel murder-form" hidden>
+        <div class="panel-title-row">
+          <h3>اختر أداتين</h3>
+          <span class="count-pill">2 فقط</span>
+        </div>
+        <div id="murder-tool-options" class="tool-choice-grid"></div>
+        <button id="murder-submit-button" class="primary-action" type="submit">تأكيد الأداتين</button>
+      </form>
+      <section class="panel" aria-labelledby="murder-sync-title">
+        <div class="panel-title-row">
+          <h3 id="murder-sync-title">حالة اللاعبين</h3>
+          <span id="murder-player-state-count" class="count-pill">0</span>
+        </div>
+        <ul id="murder-player-state-list" class="player-list"></ul>
+      </section>
+      <div id="murder-message" class="lobby-message" role="status" aria-live="polite"></div>
+      <div class="lobby-actions">
+        <button id="murder-leave-room-button" class="secondary-action" type="button">مغادرة الغرفة</button>
+      </div>
+    </section>
+
+    <section id="screen-investigation" class="screen investigation-screen" aria-labelledby="investigation-title" hidden>
+      <div class="room-hero">
+        <div>
+          <p class="eyebrow">التحقيق</p>
+          <h2 id="investigation-title">لوحة القضية</h2>
+        </div>
+        <p id="investigation-room-code" class="host-badge">----</p>
+      </div>
+      <div id="investigation-status-banner" class="phase-status" role="status" aria-live="polite"></div>
+
+      <section class="panel" aria-labelledby="case-file-title">
+        <div class="panel-title-row">
+          <h3 id="case-file-title">القواعد العامة</h3>
+          <span class="count-pill">عام</span>
+        </div>
+        <dl id="case-file-details" class="role-details"></dl>
+      </section>
+
+      <section class="panel" aria-labelledby="investigation-feed-title">
+        <div class="panel-title-row">
+          <h3 id="investigation-feed-title">تلميحات الطبيب الشرعي</h3>
+          <span id="investigation-feed-count" class="count-pill">0</span>
+        </div>
+        <ul id="investigation-feed-list" class="feed-list" aria-live="polite"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="discussion-feed-title">
+        <div class="panel-title-row">
+          <h3 id="discussion-feed-title">نقاش اللاعبين</h3>
+          <span id="discussion-feed-count" class="count-pill">0</span>
+        </div>
+        <ul id="discussion-feed-list" class="feed-list" aria-live="polite"></ul>
+        <form id="discussion-form" class="discussion-form">
+          <label>
+            <span>رسالة نقاش</span>
+            <input id="discussion-message-input" type="text" maxlength="260" autocomplete="off">
+          </label>
+          <button id="send-discussion-button" class="secondary-action" type="submit">إرسال</button>
+        </form>
+      </section>
+
+      <article id="investigation-private-card" class="role-card investigation-private-card" aria-live="polite">
+        <p id="investigation-private-label" class="role-emoji">بيانات خاصة</p>
+        <h3 id="investigation-private-title">انتظار البيانات...</h3>
+        <p id="investigation-private-description">ستظهر هنا معلوماتك المسموح بها فقط.</p>
+        <dl id="investigation-private-details" class="role-details"></dl>
+      </article>
+
+      <section id="forensic-panel-section" class="panel forensic-panel" aria-labelledby="forensic-panel-title" hidden>
+        <div class="panel-title-row">
+          <h3 id="forensic-panel-title">لوحة الطبيب الشرعي</h3>
+          <span class="count-pill">خاص</span>
+        </div>
+        <div id="forensic-chosen-tools" class="tools-row"></div>
+        <form id="forensic-case-form" class="murder-form" hidden>
+          <label>
+            <span>سبب الوفاة</span>
+            <select id="forensic-death-cause"></select>
+          </label>
+          <label>
+            <span>حالة الجثة</span>
+            <select id="forensic-body-condition"></select>
+          </label>
+          <label>
+            <span>نوع الدليل</span>
+            <select id="forensic-evidence"></select>
+          </label>
+          <label>
+            <span>الموقع الحقيقي</span>
+            <select id="forensic-location"></select>
+          </label>
+          <label>
+            <span>تفصيل جنائي</span>
+            <select id="forensic-detail"></select>
+          </label>
+          <label class="wide-field">
+            <span>تفاصيل مخفية للطبيب فقط</span>
+            <textarea id="forensic-hidden-details" maxlength="220" rows="3"></textarea>
+          </label>
+          <button id="submit-forensic-case-button" class="primary-action" type="submit">فتح التحقيق</button>
+        </form>
+        <form id="forensic-hint-form" class="murder-form" hidden>
+          <dl id="forensic-analysis-details" class="role-details wide-field"></dl>
+          <div id="forensic-hint-buttons" class="hint-button-grid wide-field" aria-label="تلميحات جاهزة"></div>
+          <label>
+            <span>اختر تلميحاً</span>
+            <select id="forensic-clue-select"></select>
+          </label>
+          <label class="wide-field">
+            <span>إضافة يدوية اختيارية</span>
+            <textarea id="forensic-custom-hint" maxlength="220" rows="3"></textarea>
+          </label>
+          <button id="send-hint-button" class="primary-action" type="submit">إرسال تلميح</button>
+        </form>
+      </section>
+
+      <section class="panel" aria-labelledby="investigation-sync-title">
+        <div class="panel-title-row">
+          <h3 id="investigation-sync-title">اللاعبون وأدواتهم</h3>
+          <span id="investigation-player-state-count" class="count-pill">0</span>
+        </div>
+        <ul id="investigation-player-state-list" class="player-list"></ul>
+      </section>
+
+      <div id="investigation-message" class="lobby-message" role="status" aria-live="polite"></div>
+      <section id="accusation-panel" class="panel" aria-labelledby="accusation-title" hidden>
+        <div class="panel-title-row">
+          <h3 id="accusation-title">الاتهام النهائي</h3>
+          <span class="count-pill">هوست</span>
+        </div>
+        <form id="accusation-form" class="settings-grid">
+          <label>
+            <span>المتهم</span>
+            <select id="accusation-target"></select>
+          </label>
+          <button id="submit-accusation-button" class="primary-action" type="submit">كشف النهاية</button>
+        </form>
+      </section>
+      <div class="lobby-actions">
+        <button id="advance-accusation-button" class="primary-action" type="button" hidden>فتح الاتهام</button>
+        <button id="investigation-leave-room-button" class="secondary-action" type="button">مغادرة الغرفة</button>
+      </div>
+    </section>
+
+    <section id="screen-end" class="screen end-screen" aria-labelledby="end-title" hidden>
+      <div class="screen-heading">
+        <div>
+          <p class="eyebrow">كشف النهاية</p>
+          <h2 id="end-title">انتهت القضية</h2>
+        </div>
+        <p id="end-room-code" class="host-badge">----</p>
+      </div>
+      <article id="end-reveal-card" class="role-card" aria-live="polite">
+        <p class="role-emoji">النتيجة</p>
+        <h3 id="end-winning-side">...</h3>
+        <p id="end-summary">يتم تحميل تفاصيل النهاية.</p>
+        <dl id="end-details" class="role-details"></dl>
+      </article>
+      <section class="panel" aria-labelledby="end-hints-title">
+        <div class="panel-title-row">
+          <h3 id="end-hints-title">التلميحات المنشورة</h3>
+          <span id="end-hints-count" class="count-pill">0</span>
+        </div>
+        <ul id="end-hints-list" class="feed-list"></ul>
+      </section>
+      <div class="lobby-actions">
+        <button id="end-restart-button" class="primary-action" type="button" hidden>جولة جديدة</button>
+        <button id="end-leave-room-button" class="secondary-action" type="button">مغادرة الغرفة</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="player-detail-modal" class="player-detail-modal" role="dialog" aria-modal="true" aria-labelledby="player-detail-modal-title" hidden>
+    <div class="player-detail-backdrop" data-close-player-detail></div>
+    <article class="player-detail-sheet">
+      <button id="player-detail-close" class="modal-close-button" type="button" data-close-player-detail aria-label="إغلاق">×</button>
+      <div id="player-detail-content"></div>
+    </article>
+  </div>
+
+  <script src="profiles.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="tools.js"></script>
+  <script src="roles.js"></script>
+  <script src="game.js"></script>
+  <script src="atmosphere.js"></script>
+  <script src="ui.js"></script>
+  <script src="lobby.js"></script>
+  <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script>window.lucide?.createIcons();</script>
+</body>
+</html>

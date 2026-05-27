@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Midnight witness portrait">
+  <defs>
+    <radialGradient id="bg" cx="45%" cy="20%" r="72%">
+      <stop offset="0" stop-color="#40216a"/>
+      <stop offset=".58" stop-color="#0b0718"/>
+      <stop offset="1" stop-color="#020206"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <path d="M78 512c28-112 88-170 178-170s150 58 178 170z" fill="#0a0a14"/>
+  <path d="M168 216c0-84 36-136 88-136s88 52 88 136c0 84-40 138-88 138s-88-54-88-138z" fill="#a87967"/>
+  <path d="M150 222c10-100 52-156 106-156s96 56 106 156c-44-54-80-80-106-80s-62 26-106 80z" fill="#070710"/>
+  <path d="M178 166c28-54 70-82 128-82 24 22 38 54 42 96-54-32-112-36-170-14z" fill="#0e0b14"/>
+  <path d="M196 260h42M274 260h42" stroke="#2a2038" stroke-width="10" stroke-linecap="round"/>
+  <path d="M218 326c24 14 52 14 76 0" stroke="#7a4f58" stroke-width="8" stroke-linecap="round"/>
+  <path d="M156 392l100 72 100-72 52 120H104z" fill="#141028"/>
+  <path d="M92 122c42-20 86-28 132-24" stroke="#a86cff" stroke-opacity=".20" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="390" cy="116" r="78" fill="#a86cff" opacity=".09"/>
+  <rect x="28" y="28" width="456" height="456" rx="82" fill="none" stroke="#a86cff" stroke-opacity=".38" stroke-width="6"/>
+</svg>

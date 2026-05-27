@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nightmares — كوابيس</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../../assets/shared/game-entry.css">
+</head>
+<body class="portal-nightmares">
+
+<a class="portal-home-link" href="../../index.html">
+  <i data-lucide="house" aria-hidden="true"></i>
+  رجوع للرئيسية
+</a>
+
+<!-- Background -->
+<div class="index-bg"></div>
+
+<!-- Effects Layer -->
+<div id="effects-layer"></div>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-logo">NIGHTMARES</div>
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- Main Content -->
+<div id="index-page">
+  <div class="game-title">NIGHTMARES</div>
+  <div class="game-subtitle">كوابيس • لعبة الليل والأسرار</div>
+
+  <div class="glass-card join-card" style="position:relative;z-index:10;">
+
+    <!-- Player Name -->
+    <div class="form-group">
+      <label class="form-label"><i data-lucide="user-round" aria-hidden="true"></i> اسم اللاعب</label>
+      <input class="input-field" id="player-name" type="text" placeholder="أدخل اسمك..." maxlength="20" autocomplete="off">
+    </div>
+
+    <!-- Animal Icon -->
+    <div class="form-group">
+      <label class="form-label"><i data-lucide="circle-user-round" aria-hidden="true"></i> اختر صورتك</label>
+      <div class="icon-grid" id="icon-grid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="divider">اختر وضع اللعب</div>
+
+    <!-- Create Room -->
+    <button class="btn btn-primary btn-full btn-lg" id="btn-create">
+      ✦ إنشاء غرفة جديدة
+    </button>
+
+    <div style="height:12px;"></div>
+
+    <!-- Join Room -->
+    <div style="display:flex;gap:10px;">
+      <input class="input-field" id="room-code-input" type="text" placeholder="كود الغرفة" maxlength="5"
+        style="text-transform:uppercase;text-align:center;letter-spacing:6px;font-size:20px;font-weight:900;">
+      <button class="btn btn-ghost" id="btn-join" style="white-space:nowrap;min-width:100px;">
+        انضم →
+      </button>
+    </div>
+
+    <div style="margin-top:8px;text-align:center;font-size:12px;color:rgba(255,255,255,0.3);">
+      أدخل كود الغرفة للانضمام إلى لعبة موجودة
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Sound Button -->
+<div id="sound-btn">🔊</div>
+
+<!-- Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/roles.js"></script>
+<script src="js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script>
+
+// ── Icons ─────────────────────────────────────────────────────────────────────
+let selectedIcon = 'wolf';
+const icons = Object.keys(ANIMAL_ICONS);
+
+function renderIcons() {
+  const grid = document.getElementById('icon-grid');
+  const avatarSeeds = {
+    wolf: 'Nyx', lion: 'Ares', dog: 'Sora', fox: 'Vesper',
+    dragon: 'Rune', eagle: 'Orion', owl: 'Luna', snake: 'Morrow',
+    tiger: 'Ash', bear: 'Bram', crow: 'Noctis', cat: 'Mira'
+  };
+  grid.innerHTML = '';
+  icons.forEach(id => {
+    const el = document.createElement('div');
+    el.className = 'icon-option' + (id === selectedIcon ? ' selected' : '');
+    el.title = id;
+    const image = document.createElement('img');
+    image.src = `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${encodeURIComponent(avatarSeeds[id])}&backgroundColor=100c1d,2a1240`;
+    image.alt = avatarSeeds[id];
+    image.loading = 'lazy';
+    image.addEventListener('error', () => {
+      image.src = '../../assets/shared/avatar-fallback.svg';
+    }, { once: true });
+    const label = document.createElement('span');
+    label.className = 'avatar-name';
+    label.textContent = avatarSeeds[id];
+    el.append(image, label);
+    el.addEventListener('click', () => {
+      selectedIcon = id;
+      grid.querySelectorAll('.icon-option').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+    grid.appendChild(el);
+  });
+}
+
+// ── Validate input ─────────────────────────────────────────────────────────────
+function getValidatedInput() {
+  const name = document.getElementById('player-name').value.trim();
+  if (!name) { showToast('أدخل اسمك أولاً', 'error'); return null; }
+  if (name.length < 2) { showToast('الاسم قصير جداً', 'error'); return null; }
+  if (!selectedIcon) { showToast('اختر رمزك أولاً', 'error'); return null; }
+  return { name, icon: selectedIcon };
+}
+
+// ── Create Room ────────────────────────────────────────────────────────────────
+document.getElementById('btn-create').addEventListener('click', async () => {
+  Sound.setStarted(); Sound.resume();
+  const inp = getValidatedInput();
+  if (!inp) return;
+
+  const btn = document.getElementById('btn-create');
+  btn.disabled = true;
+  btn.textContent = 'جاري الإنشاء...';
+
+  try {
+    const roomCode = generateRoomCode();
+    const roomId = DB.generateId();
+    const playerId = DB.generateId();
+
+    const playerData = {
+      id: playerId,
+      name: inp.name,
+      icon: inp.icon,
+      role: null,
+      team: null,
+      alive: true,
+      ready: false,
+      connected: true,
+      isHost: true,
+      seat: 0,
+      usedAbilities: {},
+      joinedAt: DB.timestamp(),
+    };
+
+    const roomData = {
+      code: roomCode,
+      gameType: 'nightmares',
+      status: 'lobby',
+      hostId: playerId,
+      createdAt: DB.timestamp(),
+      settings: {
+        maxPlayers: 6,
+        nightTime: 60,
+        dayTime: 120,
+        discussionTime: 90,
+        enabledSpecialRoles: [],
+      },
+      players: { [playerId]: playerData },
+      game: {
+        phase: 'lobby',
+        round: 0,
+        timerEndsAt: 0,
+        nightActions: {},
+        votes: {},
+        chat: {},
+        mafiaChat: {},
+        revealedRoles: {},
+        deathLog: {},
+        winner: null,
+      }
+    };
+
+    await DB.set(`rooms/${roomId}`, roomData);
+    setupPresence(roomId, playerId);
+    Session.savePlayer(playerId, inp.name, inp.icon, roomId, roomCode);
+
+    window.location.href = `lobby.html`;
+  } catch(e) {
+    console.error(e);
+    showToast('حدث خطأ، حاول مجدداً', 'error');
+    btn.disabled = false;
+    btn.textContent = '✦ إنشاء غرفة جديدة';
+  }
+});
+
+// ── Join Room ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-join').addEventListener('click', joinRoom);
+document.getElementById('room-code-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') joinRoom();
+});
+
+async function joinRoom() {
+  Sound.setStarted(); Sound.resume();
+  const inp = getValidatedInput();
+  if (!inp) return;
+
+  const code = document.getElementById('room-code-input').value.trim().toUpperCase();
+  if (code.length !== 5) { showToast('أدخل كود الغرفة (5 أحرف)', 'error'); return; }
+
+  const btn = document.getElementById('btn-join');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  try {
+    // Find room by code
+    const rooms = await DB.get('rooms');
+    if (!rooms) { showToast('الغرفة غير موجودة', 'error'); btn.disabled=false; btn.textContent='انضم →'; return; }
+
+    let foundRoomId = null;
+    let foundRoom = null;
+    for (const [rid, room] of Object.entries(rooms)) {
+      if (room.code === code && (!room.gameType || room.gameType === 'nightmares')) {
+        foundRoomId = rid;
+        foundRoom = room;
+        break;
+      }
+    }
+
+    if (!foundRoomId) { showToast('الغرفة غير موجودة', 'error'); btn.disabled=false; btn.textContent='انضم →'; return; }
+    if (foundRoom.status !== 'lobby') { showToast('اللعبة بدأت بالفعل', 'error'); btn.disabled=false; btn.textContent='انضم →'; return; }
+
+    const players = foundRoom.players || {};
+    const playerCount = Object.keys(players).length;
+    const maxPlayers = foundRoom.settings?.maxPlayers || 12;
+
+    if (playerCount >= maxPlayers) { showToast('الغرفة ممتلئة', 'error'); btn.disabled=false; btn.textContent='انضم →'; return; }
+
+    // Check reconnect
+    const existingId = Session.get('playerId');
+    if (existingId && players[existingId]) {
+      Session.savePlayer(existingId, inp.name, inp.icon, foundRoomId, code);
+      setupPresence(foundRoomId, existingId);
+      window.location.href = 'lobby.html';
+      return;
+    }
+
+    const playerId = DB.generateId();
+    const seat = playerCount;
+
+    await DB.set(`rooms/${foundRoomId}/players/${playerId}`, {
+      id: playerId,
+      name: inp.name,
+      icon: inp.icon,
+      role: null,
+      team: null,
+      alive: true,
+      ready: false,
+      connected: true,
+      isHost: false,
+      seat,
+      usedAbilities: {},
+      joinedAt: DB.timestamp(),
+    });
+
+    setupPresence(foundRoomId, playerId);
+    Session.savePlayer(playerId, inp.name, inp.icon, foundRoomId, code);
+    window.location.href = 'lobby.html';
+
+  } catch(e) {
+    console.error(e);
+    showToast('حدث خطأ', 'error');
+    btn.disabled=false; btn.textContent='انضم →';
+  }
+}
+
+// ── Room code uppercase ────────────────────────────────────────────────────────
+document.getElementById('room-code-input').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderIcons();
+Effects.init();
+addFog();
+initSoundButton();
+Effects.startMeteors();
+window.lucide?.createIcons();
+
+const portalParams = new URLSearchParams(window.location.search);
+if (portalParams.get('mode') === 'join') {
+  document.getElementById('room-code-input').value = (portalParams.get('code') || '').toUpperCase();
+}
+
+setTimeout(hideLoading, 800);
+</script>
+</body>
+</html>
