@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nightmares - اللعبة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="assets/shared/game-entry.css">
+</head>
+<body class="portal-nightmares portal-session">
+
+<a class="portal-home-link" href="index.html">رجوع للرئيسية</a>
+
+<div id="spectate-banner">أنت في وضع المشاهدة</div>
+
+<div class="game-bg day" id="game-bg"></div>
+<div id="table-overlay"></div>
+<div id="effects-layer"></div>
+
+<div id="phase-header">
+  <div id="phase-round-badge">الجولة 1</div>
+  <div id="phase-title-frame">
+    <span id="phase-label-text" class="phase-label">تحميل...</span>
+  </div>
+  <div id="timer-row">
+    <span id="timer-display" class="timer-display">--:--</span>
+  </div>
+</div>
+
+<div id="loading-screen">
+  <div class="loading-logo">NIGHTMARES</div>
+  <div class="loading-spinner"></div>
+</div>
+
+<div id="cinematic-overlay">
+  <div id="cinematic-text"><h1></h1><p></p></div>
+</div>
+
+<div class="modal-overlay" id="role-reveal-modal">
+  <div class="role-reveal-modal glass-card">
+    <div class="role-reveal-card">
+      <img id="rr-img" src="" alt="دور" loading="lazy" decoding="async">
+    </div>
+    <div class="role-reveal-name" id="rr-name"></div>
+    <div class="role-reveal-desc" id="rr-desc"></div>
+    <div class="role-reveal-team" id="rr-team"></div>
+    <button class="btn btn-primary btn-full" id="rr-close">فهمت دوري</button>
+  </div>
+</div>
+
+<div class="role-preview-overlay" id="role-preview-modal">
+  <div class="role-preview-card">
+    <img id="role-preview-img" src="" alt="دور" loading="lazy" decoding="async">
+  </div>
+</div>
+
+<div class="whisper-reveal-overlay" id="whisper-reveal-overlay">
+  <div class="whisper-label">الهمسة كشفت...</div>
+  <div class="whisper-card-wrapper">
+    <img id="whisper-reveal-img" src="" alt="" loading="lazy" decoding="async">
+  </div>
+  <div class="whisper-label" id="whisper-label"></div>
+  <div class="whisper-countdown" id="whisper-countdown">10</div>
+</div>
+
+<div id="win-screen">
+  <div class="win-title" id="win-title"></div>
+  <div class="win-subtitle" id="win-subtitle"></div>
+  <div class="win-roles-reveal" id="win-roles-reveal"></div>
+  <div class="win-actions">
+    <button class="btn btn-ghost" onclick="window.location.href='index.html'">الرئيسية</button>
+  </div>
+</div>
+
+<div id="game-page">
+  <aside class="action-panel" aria-label="لوحة اللاعب">
+    <div class="action-panel-header">
+      <div class="game-title-sm">NIGHTMARES</div>
+      <div class="phase-indicator" id="phase-indicator">
+        <div class="phase-dot"></div>
+        <span class="phase-label phase-label-side">الطاولة</span>
+      </div>
+    </div>
+
+    <div class="dead-overlay-banner" id="dead-banner" style="display:none;"></div>
+
+    <div class="my-role-section">
+      <h4>دورك في هذه اللعبة</h4>
+      <div class="role-card-display" id="role-card-display">
+        <img id="my-role-img" src="assets/cards/basic/citizen_new.png" alt="دور" loading="lazy" decoding="async">
+        <div class="role-card-name">
+          <span id="my-role-name">تحميل...</span>
+          <span class="role-card-team" id="my-role-team"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="night-action-section" id="night-action-section" style="display:none;">
+      <h4>فعل الليل</h4>
+      <div class="target-list" id="night-target-list"></div>
+      <button class="btn btn-primary btn-sm btn-full confirm-action-btn" id="confirm-night-action" style="display:none;">تأكيد الاختيار</button>
+    </div>
+
+    <div class="ability-section" id="ability-section" style="display:none;">
+      <h4>قدرتك الخاصة</h4>
+      <div id="ability-content"></div>
+    </div>
+
+    <div class="voting-section" id="voting-section" style="display:none;">
+      <h4>التصويت</h4>
+      <div class="vote-list" id="vote-list"></div>
+    </div>
+
+    <div id="mafia-chat-wrap">
+      <div class="mafia-chat-label">دردشة المافيا السرية</div>
+      <div class="mafia-chat-badge">دردشتك في القسم السفلي - تبويب المافيا</div>
+    </div>
+  </aside>
+
+  <main class="game-main">
+    <section class="game-table-area" aria-label="طاولة اللاعبين">
+      <div class="game-table-container">
+        <div class="game-players-ring" id="game-players-ring"></div>
+      </div>
+    </section>
+
+    <section class="game-chat">
+      <div class="game-chat-tabs">
+        <span class="chat-tab active" id="tab-public">عام</span>
+        <span class="chat-tab mafia-tab" id="tab-mafia" style="display:none;">مافيا</span>
+        <div class="chat-lock-msg" id="chat-lock-msg" style="display:none;">الدردشة مغلقة في الليل</div>
+      </div>
+      <div class="chat-messages" id="game-chat-messages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="game-chat-input" placeholder="اكتب رسالة..." maxlength="200" autocomplete="off">
+        <button class="btn btn-primary btn-sm" id="game-chat-send">إرسال</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="bottom-action-bar" class="bottom-action-bar hidden">
+  <button id="bottom-unvote-btn" class="bottom-action-btn" type="button">سحب الصوت</button>
+  <div class="bottom-vote-guide" aria-live="polite">
+    <strong>التصويت</strong>
+    <span>اختر لاعباً من الطاولة للتصويت ضده</span>
+  </div>
+  <button id="bottom-skip-btn" class="bottom-action-btn" type="button">تخطي</button>
+</div>
+
+<div id="toast-container"></div>
+
+<div id="action-menu-overlay" style="display:none;"></div>
+<div id="action-menu" style="display:none;">
+  <div id="action-menu-title"></div>
+  <div id="action-menu-list"></div>
+  <button id="action-menu-cancel" type="button">إلغاء</button>
+</div>
+
+<div id="event-announcement-overlay" class="event-announcement-overlay hidden">
+  <div class="event-announcement-card">
+    <div id="event-announcement-icon" class="event-announcement-icon"></div>
+    <h2 id="event-announcement-title"></h2>
+    <p id="event-announcement-subtitle"></p>
+  </div>
+</div>
+
+<div id="sound-btn">🔊</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/roles.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.getElementById('rr-close').addEventListener('click', () => {
+  document.getElementById('role-reveal-modal').classList.remove('active');
+});
+
+document.getElementById('role-card-display')?.addEventListener('click', () => {
+  const img = document.getElementById('my-role-img');
+  const preview = document.getElementById('role-preview-img');
+  if (img && preview && img.src) {
+    preview.src = img.src;
+    document.getElementById('role-preview-modal').classList.add('active');
+  }
+});
+
+document.getElementById('role-preview-modal')?.addEventListener('click', () => {
+  document.getElementById('role-preview-modal').classList.remove('active');
+});
+
+function showMyRoleCard(me) {
+  const roleData = RoleEngine.getRole(me.role);
+  if (me.role === 'liar') {
+    const fakeRole = getPlayerLiarFakeRole(me);
+    document.getElementById('rr-img').src = getLiarDisplayCard(me);
+    document.getElementById('rr-name').textContent = 'دورك: الكذاب';
+    document.getElementById('rr-name').style.color = roleData.color;
+    document.getElementById('rr-desc').textContent = roleData.description;
+    document.getElementById('rr-team').textContent = `الكذبة الحالية: ${RoleEngine.getRoleArabicName(fakeRole)}`;
+    document.getElementById('rr-team').style.color = roleData.color;
+    document.getElementById('role-reveal-modal').classList.add('active');
+    return;
+  }
+
+  document.getElementById('rr-img').src = roleData.image;
+  document.getElementById('rr-name').textContent = roleData.arabicName;
+  document.getElementById('rr-name').style.color = roleData.color;
+  document.getElementById('rr-desc').textContent = roleData.description;
+
+  const teamMap = { mafia: 'فريق المافيا', citizens: 'المواطنون', neutral: 'محايد' };
+  document.getElementById('rr-team').textContent = teamMap[roleData.team] || '';
+  document.getElementById('rr-team').style.color = roleData.color;
+  document.getElementById('role-reveal-modal').classList.add('active');
+
+  if (RoleEngine.isMafia(me.role)) {
+    showToast('أنت من المافيا', 'error', 4000);
+  }
+}
+</script>
+<script src="js/game.js"></script>
+</body>
+</html>
