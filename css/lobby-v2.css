@@ -1,0 +1,1198 @@
+/* ===================================================
+   NIGHTMARES — LOBBY V2 STYLES
+   Dark fantasy / galaxy / crystal gothic UI
+   =================================================== */
+
+/* ── CSS VARIABLES ─────────────────────────────────── */
+:root {
+  --lv2-bg:       #050008;
+  --lv2-bg2:      #0a000f;
+  --lv2-purple:   #7c3aed;
+  --lv2-violet:   #a855f7;
+  --lv2-glow:     #c084fc;
+  --lv2-neon:     #d946ef;
+  --lv2-gold:     #f59e0b;
+  --lv2-crystal:  rgba(168,85,247,0.55);
+  --lv2-glass:    rgba(255,255,255,0.04);
+  --lv2-border:   rgba(168,85,247,0.28);
+  --lv2-panel-bg: linear-gradient(175deg, rgba(14,6,28,0.94) 0%, rgba(5,0,12,0.97) 100%);
+  --lv2-text:     #f8f3ff;
+  --lv2-muted:    rgba(200,180,255,0.55);
+}
+
+/* Light mode overrides */
+body.lv2-light {
+  --lv2-bg:       #1a0d2e;
+  --lv2-bg2:      #231240;
+  --lv2-glass:    rgba(255,255,255,0.10);
+  --lv2-border:   rgba(168,85,247,0.45);
+  --lv2-panel-bg: linear-gradient(175deg, rgba(44,22,72,0.96) 0%, rgba(28,12,50,0.98) 100%);
+  --lv2-text:     #f0e8ff;
+  --lv2-muted:    rgba(220,190,255,0.75);
+}
+
+/* ── BACKGROUND ────────────────────────────────────── */
+.lv2-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('../assets/backgrounds/main_lobby_background.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.lv2-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(90,20,150,0.55) 0%, rgba(4,0,8,0.88) 70%);
+}
+
+body.lv2-light .lv2-bg::after {
+  background: radial-gradient(ellipse at 50% 30%, rgba(110,40,180,0.45) 0%, rgba(18,6,36,0.80) 70%);
+}
+
+/* Particle stars */
+.lv2-stars {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.lv2-star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: lv2-twinkle var(--dur, 4s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  opacity: 0;
+}
+
+@keyframes lv2-twinkle {
+  0%,100% { opacity: 0; transform: scale(1); }
+  50% { opacity: var(--op, 0.6); transform: scale(1.4); }
+}
+
+/* ── LAYOUT ────────────────────────────────────────── */
+#lobby-page.lv2-layout {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ────────────────────────────────────────── */
+.lv2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--lv2-border);
+  background: rgba(4,0,10,0.75);
+  backdrop-filter: blur(14px);
+  position: relative;
+  z-index: 30;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.lv2-header-logo {
+  font-size: clamp(18px, 2.5vw, 26px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, var(--lv2-glow), var(--lv2-neon));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 12px rgba(192,132,252,0.5));
+}
+
+.lv2-header-center { flex: 1; display: flex; justify-content: center; }
+
+.lv2-code-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  background: rgba(100,40,180,0.18);
+  border: 1px solid var(--lv2-crystal);
+  border-radius: 14px;
+  padding: 6px 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 18px rgba(168,85,247,0.15), inset 0 0 12px rgba(168,85,247,0.06);
+  position: relative;
+}
+
+.lv2-code-box::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(168,85,247,0.3), transparent, rgba(217,70,239,0.2));
+  pointer-events: none;
+}
+
+.lv2-code-box:hover {
+  background: rgba(100,40,180,0.32);
+  box-shadow: 0 0 28px rgba(168,85,247,0.35);
+}
+
+.lv2-code-label {
+  font-size: 10px;
+  color: var(--lv2-muted);
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.lv2-code-val {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--lv2-glow);
+  letter-spacing: 5px;
+  line-height: 1;
+}
+
+.lv2-code-copy {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.45;
+}
+
+.lv2-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.lv2-header-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--lv2-border);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  color: var(--lv2-text);
+  font-family: 'Tajawal', sans-serif;
+}
+
+.lv2-header-btn:hover {
+  border-color: var(--lv2-violet);
+  background: rgba(168,85,247,0.15);
+  transform: scale(1.08);
+}
+
+.lv2-leave-btn { border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+.lv2-leave-btn:hover { border-color: #f87171; background: rgba(239,68,68,0.15); }
+
+/* ── THREE-COLUMN BODY ─────────────────────────────── */
+.lv2-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr 290px;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  height: calc(100vh - 60px);
+}
+
+/* ── PANEL SHARED ──────────────────────────────────── */
+.lv2-panel {
+  background: var(--lv2-panel-bg);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lv2-panel::-webkit-scrollbar { width: 4px; }
+.lv2-panel::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.lv2-panel::-webkit-scrollbar-thumb { background: var(--lv2-purple); border-radius: 4px; }
+
+.lv2-panel-left {
+  border-left: 1px solid var(--lv2-border);
+  border-right: none;
+}
+
+.lv2-panel-right {
+  border-right: 1px solid var(--lv2-border);
+  border-left: none;
+}
+
+.lv2-panel-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(168,85,247,0.15);
+  position: sticky;
+  top: 0;
+  background: rgba(5,0,12,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+
+.lv2-panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lv2-glow);
+  letter-spacing: 1px;
+}
+
+.lv2-player-count {
+  font-size: 12px;
+  color: var(--lv2-muted);
+  background: rgba(168,85,247,0.12);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
+.lv2-settings-icon { font-size: 16px; opacity: 0.7; }
+
+/* ── PLAYER LIST ────────────────────────────────────── */
+.lv2-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 12px 0;
+}
+
+.player-list-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(168,85,247,0.14);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.player-list-item:hover { border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.07); }
+
+.player-list-item.player-status-kicked,
+.player-list-item.player-status-left {
+  opacity: 0.38;
+  filter: grayscale(0.6);
+}
+
+.player-list-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 34px;
+  border: 1.5px solid rgba(168,85,247,0.4);
+  box-shadow: 0 0 8px rgba(124,58,237,0.2);
+  background: rgba(0,0,0,0.3);
+}
+
+.player-list-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lv2-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-list-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-host   { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+.badge-ready  { background: rgba(34,197,94,0.18);  color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+.badge-waiting{ background: rgba(168,85,247,0.12); color: var(--lv2-muted); border: 1px solid rgba(168,85,247,0.18); }
+
+.player-points-badge {
+  font-size: 10px;
+  color: #fcd34d;
+  margin-inline-start: 3px;
+}
+
+.lobby-kick-btn {
+  font-size: 10px;
+  padding: 2px 7px;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 6px;
+  color: #fca5a5;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  flex-shrink: 0;
+}
+.lobby-kick-btn:hover { background: rgba(239,68,68,0.25); }
+
+/* Empty slot rows */
+.lv2-empty-slot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(168,85,247,0.1);
+  border-radius: 12px;
+  color: rgba(168,85,247,0.3);
+  font-size: 12px;
+}
+
+.lv2-empty-slot-icon {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px dashed rgba(168,85,247,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; opacity: 0.4;
+}
+
+/* Enabled extras view */
+.lv2-enabled-extras {
+  margin: 10px 12px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(168,85,247,0.18);
+  border-radius: 14px;
+  background: rgba(168,85,247,0.04);
+  flex-shrink: 0;
+}
+
+.lv2-enabled-extras strong {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--lv2-glow);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.lv2-enabled-extras-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--lv2-muted);
+}
+
+.enabled-extra-role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(168,85,247,0.22);
+  background: rgba(10,4,20,0.6);
+  color: var(--lv2-text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.enabled-extra-role-chip img {
+  width: 18px; height: 18px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Panel footer */
+.lv2-panel-footer {
+  padding: 12px 12px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.lv2-invite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: rgba(168,85,247,0.1);
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 12px;
+  color: var(--lv2-glow);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Tajawal', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.lv2-invite-btn:hover {
+  background: rgba(168,85,247,0.22);
+  border-color: var(--lv2-violet);
+  box-shadow: 0 0 16px rgba(168,85,247,0.2);
+}
+
+.lv2-start-ready-btn { font-size: 14px; padding: 10px 20px; }
+
+.lv2-ready-hint {
+  font-size: 10px;
+  color: rgba(255,255,255,0.22);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Chat in left panel */
+.lv2-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-top: 1px solid rgba(168,85,247,0.12);
+  margin-top: 6px;
+}
+
+.lv2-chat .chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 60px;
+  max-height: 120px;
+}
+
+.lv2-chat .chat-messages::-webkit-scrollbar { width: 3px; }
+.lv2-chat .chat-messages::-webkit-scrollbar-thumb { background: var(--lv2-purple); }
+
+.lv2-chat-input-row {
+  display: flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid rgba(168,85,247,0.08);
+}
+
+.lv2-chat-input-row input {
+  flex: 1;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(168,85,247,0.18);
+  border-radius: 20px;
+  padding: 7px 14px;
+  color: var(--lv2-text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 12px;
+  outline: none;
+  text-align: right;
+}
+
+.lv2-chat-input-row input:focus { border-color: var(--lv2-violet); }
+.lv2-chat-input-row input::placeholder { color: rgba(168,85,247,0.35); }
+
+.lv2-chat-send {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,85,247,0.3);
+  background: rgba(124,58,237,0.25);
+  color: var(--lv2-glow);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  font-family: 'Tajawal', sans-serif;
+}
+.lv2-chat-send:hover { background: rgba(124,58,237,0.45); }
+
+/* ── CENTER ─────────────────────────────────────────── */
+.lv2-center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 16px;
+  gap: 12px;
+}
+
+/* Host badge */
+.lv2-host-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 40px;
+  padding: 6px 18px 6px 10px;
+  box-shadow: 0 0 18px rgba(245,158,11,0.12);
+}
+
+.lv2-host-crown {
+  font-size: 20px;
+  filter: drop-shadow(0 0 8px rgba(245,158,11,0.6));
+  animation: lv2-crown-glow 2s ease-in-out infinite;
+}
+
+@keyframes lv2-crown-glow {
+  0%,100% { filter: drop-shadow(0 0 6px rgba(245,158,11,0.4)); }
+  50%      { filter: drop-shadow(0 0 16px rgba(245,158,11,0.8)); }
+}
+
+.lv2-host-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.lv2-host-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lv2-gold, #f59e0b);
+}
+
+.lv2-host-role {
+  font-size: 10px;
+  color: rgba(245,158,11,0.6);
+  letter-spacing: 0.5px;
+}
+
+/* Crystal Frame */
+.lv2-frame-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.lv2-crystal-frame {
+  position: relative;
+  width: 100%;
+  max-width: 660px;
+  aspect-ratio: 16/10;
+  border-radius: 6px;
+}
+
+/* Crystal corner decorations */
+.lv2-crystal-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  z-index: 5;
+}
+
+.lv2-crystal-corner::before,
+.lv2-crystal-corner::after {
+  content: '';
+  position: absolute;
+  background: var(--lv2-violet);
+  border-radius: 2px;
+}
+
+.lv2-cc-tl { top: -4px; right: -4px; }
+.lv2-cc-tr { top: -4px; left: -4px; }
+.lv2-cc-bl { bottom: -4px; right: -4px; }
+.lv2-cc-br { bottom: -4px; left: -4px; }
+
+.lv2-cc-tl::before,
+.lv2-cc-tr::before,
+.lv2-cc-bl::before,
+.lv2-cc-br::before { width: 2px; height: 30px; top: 0; }
+
+.lv2-cc-tl::after,
+.lv2-cc-tr::after,
+.lv2-cc-bl::after,
+.lv2-cc-br::after { width: 30px; height: 2px; }
+
+.lv2-cc-tl::before,
+.lv2-cc-tl::after { right: 0; top: 0; box-shadow: 0 0 10px rgba(168,85,247,0.7); }
+.lv2-cc-tr::before,
+.lv2-cc-tr::after { left: 0; top: 0; box-shadow: 0 0 10px rgba(168,85,247,0.7); }
+.lv2-cc-bl::before,
+.lv2-cc-bl::after { right: 0; bottom: 0; top: auto; box-shadow: 0 0 10px rgba(168,85,247,0.7); }
+.lv2-cc-br::before,
+.lv2-cc-br::after { left: 0; bottom: 0; top: auto; box-shadow: 0 0 10px rgba(168,85,247,0.7); }
+
+.lv2-cc-bl::before { bottom: 0; top: auto; }
+.lv2-cc-br::before { bottom: 0; top: auto; }
+
+/* Animated glowing border */
+.lv2-crystal-frame::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 8px;
+  background: linear-gradient(45deg,
+    rgba(168,85,247,0.6),
+    rgba(217,70,239,0.2),
+    rgba(168,85,247,0.6),
+    rgba(124,58,237,0.3)
+  );
+  background-size: 300% 300%;
+  animation: lv2-border-flow 4s linear infinite;
+  z-index: 0;
+}
+
+@keyframes lv2-border-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.lv2-frame-inner {
+  position: absolute;
+  inset: 2px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(4,0,10,0.5);
+  z-index: 1;
+}
+
+.lv2-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  opacity: 0.75;
+}
+
+/* Scene label */
+.lv2-scene-label {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.lv2-scene-title {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 900;
+  color: var(--lv2-text);
+  text-shadow: 0 0 20px rgba(168,85,247,0.5), 0 0 40px rgba(217,70,239,0.2);
+  margin-bottom: 4px;
+}
+
+.lv2-scene-desc {
+  font-size: clamp(11px, 1.1vw, 13px);
+  color: var(--lv2-muted);
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+/* ── RIGHT PANEL: SETTINGS ──────────────────────────── */
+.lv2-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.lv2-setting-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.lv2-setting-row:hover { border-color: rgba(168,85,247,0.15); }
+
+.lv2-setting-icon { font-size: 14px; flex-shrink: 0; opacity: 0.7; }
+
+.lv2-setting-label {
+  flex: 1;
+  font-size: 12px;
+  color: var(--lv2-muted);
+  font-weight: 600;
+}
+
+.lv2-setting-input {
+  width: 64px;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(168,85,247,0.22);
+  border-radius: 8px;
+  padding: 5px 8px;
+  color: var(--lv2-text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.lv2-setting-input:focus { border-color: var(--lv2-violet); box-shadow: 0 0 0 2px rgba(168,85,247,0.15); }
+
+/* Theme toggle row */
+.lv2-theme-row {
+  padding: 8px 12px;
+  border-top: 1px solid rgba(168,85,247,0.12);
+  border-bottom: 1px solid rgba(168,85,247,0.12);
+}
+
+.visual-mode-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.vm-btn {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(168,85,247,0.25);
+  background: rgba(255,255,255,0.04);
+  color: var(--lv2-muted);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vm-btn.active {
+  background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(76,29,149,0.6));
+  border-color: var(--lv2-violet);
+  color: var(--lv2-glow);
+  box-shadow: 0 0 10px rgba(168,85,247,0.2);
+}
+
+.vm-btn:not(.active):hover { background: rgba(168,85,247,0.08); color: var(--lv2-text); }
+
+/* Bulk role buttons */
+.lv2-bulk-btns {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.lv2-bulk-btn { flex: 1; font-size: 11px; }
+
+/* Roles section title */
+.lv2-roles-title {
+  padding: 8px 14px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--lv2-glow);
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(168,85,247,0.12);
+  margin: 0 4px;
+}
+
+/* Role list */
+.lv2-roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 10px;
+}
+
+.lv2-role-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(168,85,247,0.1);
+  border-radius: 10px;
+  transition: all 0.18s;
+}
+
+.lv2-role-row:hover { border-color: rgba(168,85,247,0.25); background: rgba(168,85,247,0.06); }
+
+.lv2-role-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(168,85,247,0.22);
+  background: rgba(0,0,0,0.3);
+}
+
+.lv2-role-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lv2-text);
+  min-width: 0;
+}
+
+.lv2-role-name small {
+  display: block;
+  font-size: 10px;
+  color: var(--lv2-muted);
+  font-weight: 400;
+  line-height: 1.3;
+  margin-top: 1px;
+  white-space: normal;
+}
+
+.lv2-role-row-rich .lv2-role-name { align-items: flex-start; }
+
+/* Keep existing toggle-switch working (from style.css) */
+/* Redefining here for clarity & new context */
+.lv2-roles-list .toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ── MOBILE SETTINGS ACCORDION ─────────────────────── */
+.lv2-mobile-settings {
+  display: none;
+  padding: 10px 14px;
+  background: var(--lv2-panel-bg);
+  border-top: 1px solid var(--lv2-border);
+}
+
+.lv2-accordion-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 12px;
+  color: var(--lv2-glow);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lv2-accordion-arrow { font-size: 18px; transition: transform 0.2s; }
+.lv2-accordion-toggle[aria-expanded="true"] .lv2-accordion-arrow { transform: rotate(180deg); }
+
+.lv2-accordion-body {
+  padding-top: 10px;
+}
+
+/* Mobile start bar */
+.lv2-mobile-start-bar {
+  display: none;
+  padding: 10px 14px 16px;
+  background: rgba(4,0,10,0.9);
+  border-top: 1px solid var(--lv2-border);
+  backdrop-filter: blur(10px);
+}
+
+/* ── LIGHT MODE OVERRIDES ────────────────────────────── */
+body.lv2-light .lv2-panel {
+  background: linear-gradient(175deg, rgba(44,22,72,0.97) 0%, rgba(28,12,50,0.99) 100%);
+}
+
+body.lv2-light .lv2-panel-header {
+  background: rgba(30,12,52,0.95);
+}
+
+body.lv2-light .player-list-item {
+  background: rgba(255,255,255,0.06);
+}
+
+body.lv2-light .lv2-bg::after {
+  background: radial-gradient(ellipse at 50% 30%, rgba(110,40,180,0.38) 0%, rgba(18,6,36,0.72) 70%);
+}
+
+body.lv2-light .lv2-crystal-frame::before {
+  background: linear-gradient(45deg,
+    rgba(200,120,255,0.7),
+    rgba(240,100,240,0.3),
+    rgba(200,120,255,0.7),
+    rgba(160,80,240,0.4)
+  );
+  background-size: 300% 300%;
+  animation: lv2-border-flow 4s linear infinite;
+}
+
+body.lv2-light .lv2-setting-input {
+  background: rgba(10,0,22,0.6);
+}
+
+/* ── TABLE AREA INSIDE FRAME ─────────────────────────── */
+.lv2-frame-inner .table-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.lv2-frame-inner .table-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.65;
+}
+
+/* Player seats inside frame */
+.lv2-frame-inner .players-around-table {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lv2-frame-inner .player-seat {
+  pointer-events: all;
+}
+
+/* ── PORTAL-SESSION COMPATIBILITY ─────────────────────── */
+/* Override old #lobby-page grid from style.css */
+#lobby-page.lv2-layout {
+  display: flex !important;
+  grid-template-rows: unset !important;
+}
+
+/* Keep portal-nightmares background consistent */
+body.portal-nightmares.portal-session .lobby-bg { display: none; }
+body.portal-nightmares.portal-session .portal-home-link { display: none; }
+
+/* ── RESPONSIVE: TABLET ──────────────────────────────── */
+@media (max-width: 1100px) {
+  .lv2-body {
+    grid-template-columns: 220px 1fr 250px;
+  }
+
+  .lv2-setting-input { width: 54px; }
+}
+
+@media (max-width: 860px) {
+  .lv2-body {
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .lv2-panel-right {
+    display: none;
+  }
+
+  .lv2-mobile-settings {
+    display: block;
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── RESPONSIVE: MOBILE ──────────────────────────────── */
+@media (max-width: 640px) {
+  .lv2-header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .lv2-header-logo {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  .lv2-code-val { font-size: 16px; letter-spacing: 3px; }
+  .lv2-code-box { padding: 5px 14px; border-radius: 10px; }
+  .lv2-code-copy { display: none; }
+
+  .lv2-header-btn { width: 32px; height: 32px; font-size: 14px; }
+
+  /* Single column on mobile */
+  .lv2-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  .lv2-panel-left {
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid var(--lv2-border);
+    max-height: none;
+    overflow: visible;
+  }
+
+  .lv2-chat {
+    max-height: 120px;
+  }
+
+  .lv2-center {
+    padding: 10px;
+    order: -1; /* center goes first on mobile */
+  }
+
+  .lv2-crystal-frame {
+    aspect-ratio: 4/3;
+    max-width: 100%;
+  }
+
+  .lv2-panel-right { display: none; }
+
+  .lv2-mobile-settings {
+    display: block;
+  }
+
+  .lv2-mobile-start-bar {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+  }
+
+  /* Hide the sidebar start/ready buttons on mobile */
+  .lv2-panel-left .lv2-start-ready-btn { display: none; }
+
+  /* Stack host badge */
+  .lv2-host-badge { padding: 5px 12px 5px 8px; }
+  .lv2-host-name { font-size: 13px; }
+
+  /* Better player count spacing */
+  .lv2-player-list { padding: 10px 10px 0; }
+
+  .player-list-item { padding: 7px 8px; }
+}
+
+@media (max-width: 390px) {
+  .lv2-code-val { font-size: 14px; letter-spacing: 2px; }
+  .lv2-scene-title { font-size: 16px; }
+  .lv2-scene-desc { font-size: 11px; }
+}
+
+/* 2026-06-01 repair: keep real controls reachable and lower mobile GPU load */
+@media (max-width: 700px) {
+  .lv2-bg {
+    background-image: url('../assets/optimized/backgrounds/lobby_bg_mobile.png');
+  }
+
+  .lv2-stars,
+  .lv2-star {
+    display: none !important;
+    animation: none !important;
+  }
+
+  .lv2-header,
+  .lv2-header-btn,
+  .lv2-panel-header,
+  .lv2-mobile-start-bar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  #lobby-page.lv2-layout {
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+
+  .lv2-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    min-height: calc(100svh - 58px);
+    overflow: visible;
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+
+  .lv2-panel-left {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .lv2-player-list {
+    max-height: min(42svh, 360px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lv2-panel-right {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    max-height: min(62svh, 560px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: none;
+    border-top: 1px solid var(--lv2-border);
+    box-sizing: border-box;
+  }
+
+  .lv2-mobile-settings {
+    display: none !important;
+  }
+
+  .lv2-mobile-start-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 40;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lv2-star,
+  .lv2-host-crown,
+  .lv2-crystal-frame::before,
+  .lv2-crystal-frame::after,
+  .lv2-header-btn,
+  .lv2-code-box,
+  .player-list-item {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── MISC: keep existing chat-msg styles working ─────── */
+.chat-msg {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.chat-msg .icon {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 20px;
+  border: 1px solid rgba(168,85,247,0.25);
+}
+
+.chat-msg .name { color: var(--lv2-glow); font-weight: 700; white-space: nowrap; }
+.chat-msg .text { color: rgba(255,255,255,0.82); word-break: break-word; }
+
+/* ── CRYSTAL DIAMOND ACCENTS ON FRAME ────────────────── */
+.lv2-crystal-frame::after {
+  content: '◆';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--lv2-violet);
+  font-size: 18px;
+  filter: drop-shadow(0 0 8px rgba(168,85,247,0.8));
+  animation: lv2-diamond-glow 2.5s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes lv2-diamond-glow {
+  0%,100% { opacity: 0.6; filter: drop-shadow(0 0 6px rgba(168,85,247,0.6)); }
+  50%      { opacity: 1;   filter: drop-shadow(0 0 14px rgba(217,70,239,0.9)); }
+}
+
+/* Override: make sure loading-screen still works */
+#loading-screen { z-index: 9999; }
