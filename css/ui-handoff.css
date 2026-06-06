@@ -1,0 +1,981 @@
+/* NIGHTMARES UI handoff skin: real controls over bright fantasy art. */
+:root {
+  --ui-pink: #e95faf;
+  --ui-pink-2: #f7a4d3;
+  --ui-purple: #8d5ac7;
+  --ui-ink: #6d3975;
+  --ui-muted: #a876a5;
+  --ui-panel: rgba(255, 255, 255, 0.74);
+  --ui-panel-strong: rgba(255, 255, 255, 0.91);
+  --ui-border: rgba(218, 130, 205, 0.34);
+  --ui-shadow: 0 18px 48px rgba(158, 75, 155, 0.18);
+  --ui-soft-shadow: 0 10px 26px rgba(158, 75, 155, 0.13);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body.portal-nightmares {
+  color: var(--ui-ink);
+  background:
+    radial-gradient(circle at 20% 8%, rgba(255, 255, 255, 0.9), transparent 26%),
+    linear-gradient(180deg, #fff4fb 0%, #f9ddf0 52%, #f3c9e9 100%);
+}
+
+body.portal-nightmares .index-bg {
+  background-image: url("../assets/ui-handoff/entry_clean_background.png");
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.04) brightness(1.04);
+}
+
+body.portal-nightmares .index-bg::after {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.36), rgba(255, 236, 248, 0.12) 50%, rgba(255, 255, 255, 0.4)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 229, 246, 0.28));
+}
+
+.handoff-entry {
+  min-height: 100svh;
+  width: min(1180px, calc(100vw - 28px));
+  margin: 0 auto;
+  padding: 24px 0 28px;
+  display: grid;
+  align-content: center;
+  gap: 18px;
+}
+
+.handoff-entry-hero {
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+}
+
+.entry-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 4px 16px;
+  border: 1px solid rgba(219, 149, 215, 0.42);
+  border-radius: 999px;
+  color: rgba(124, 73, 137, 0.72);
+  background: rgba(255, 255, 255, 0.52);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.handoff-entry .game-title,
+.handoff-entry .game-subtitle {
+  color: var(--ui-ink);
+  text-shadow: 0 2px 18px rgba(255, 255, 255, 0.78);
+}
+
+.handoff-entry .game-title {
+  font-size: clamp(34px, 9vw, 62px);
+  letter-spacing: 2px;
+}
+
+.handoff-entry .game-subtitle {
+  max-width: 420px;
+  margin: 0 auto;
+  color: rgba(107, 57, 117, 0.72);
+}
+
+.handoff-entry-panel {
+  width: min(390px, 100%);
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 26px;
+  background: var(--ui-panel);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  box-shadow: var(--ui-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.handoff-entry-panel::before,
+.handoff-entry-panel::after,
+.entry-panel-glow {
+  display: none !important;
+}
+
+.entry-tab-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  min-height: 42px;
+  padding: 5px;
+  margin-bottom: 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(226, 152, 215, 0.22);
+}
+
+.entry-tab-btn {
+  min-height: 34px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(120, 68, 133, 0.68);
+  font-family: "Tajawal", sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.entry-tab-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #f27abb, #9b6bd3);
+  box-shadow: 0 8px 20px rgba(219, 95, 171, 0.28);
+}
+
+.entry-tab-panel:not(.active) {
+  display: none;
+}
+
+.handoff-entry .form-group {
+  margin-bottom: 10px;
+}
+
+.handoff-entry .form-label {
+  color: var(--ui-ink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.handoff-entry .input-field {
+  min-height: 46px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(219, 149, 215, 0.4);
+  color: var(--ui-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.handoff-entry .input-field::placeholder {
+  color: rgba(120, 68, 133, 0.46);
+}
+
+.handoff-entry .divider {
+  color: rgba(120, 68, 133, 0.58);
+}
+
+.handoff-entry .icon-grid {
+  grid-template-columns: repeat(6, minmax(34px, 1fr));
+  gap: 6px;
+  padding-bottom: 2px;
+}
+
+.handoff-entry .icon-option {
+  min-width: 0;
+  height: 44px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(219, 149, 215, 0.24);
+}
+
+.handoff-entry .icon-option .avatar-name {
+  display: none;
+}
+
+.handoff-entry .entry-avatar-frame {
+  width: 100%;
+  height: 100%;
+}
+
+.handoff-entry .entry-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.handoff-entry .icon-option.selected {
+  border-color: rgba(233, 95, 175, 0.9);
+  box-shadow: 0 0 0 3px rgba(233, 95, 175, 0.14);
+  background: rgba(255, 242, 250, 0.95);
+}
+
+.handoff-entry .entry-main-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.handoff-entry .btn {
+  min-height: 48px;
+  border-radius: 16px;
+}
+
+.handoff-entry .btn-primary,
+.handoff-lobby .btn-primary {
+  background: linear-gradient(135deg, #f06ab4, #9b6bd3);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 12px 28px rgba(213, 86, 168, 0.26);
+}
+
+.handoff-entry .btn-ghost,
+.handoff-lobby .btn-ghost {
+  color: var(--ui-ink);
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(219, 149, 215, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.handoff-entry .entry-note,
+.handoff-update-card p,
+.handoff-card-title small {
+  color: rgba(107, 57, 117, 0.64);
+}
+
+.handoff-update-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(219, 149, 215, 0.24);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.handoff-update-card strong {
+  color: var(--ui-ink);
+  font-size: 15px;
+}
+
+.handoff-update-heading {
+  text-align: center;
+}
+
+.handoff-update-poster {
+  display: block;
+  width: 100%;
+  max-width: min(100%, 640px);
+  height: auto;
+  margin: 0 auto;
+  border: 1px solid rgba(219, 149, 215, 0.28);
+  border-radius: 16px;
+  object-fit: contain;
+  box-shadow: 0 16px 34px rgba(177, 88, 165, 0.16);
+}
+
+.handoff-lobby {
+  --lv2-text: var(--ui-ink);
+  --lv2-muted: rgba(122, 73, 135, 0.63);
+  --lv2-glow: #b25bc4;
+  --lv2-violet: #d96ab8;
+  --lv2-border: rgba(219, 149, 215, 0.32);
+  color: var(--ui-ink);
+  background: linear-gradient(180deg, #fff5fb 0%, #fbe3f2 52%, #f4cce9 100%);
+}
+
+.handoff-lobby .lv2-bg {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255,255,255,.9), transparent 22%),
+    url("../assets/ui-handoff/entry_clean_background.png") center / cover no-repeat;
+  opacity: 0.72;
+}
+
+.handoff-lobby .lv2-bg::after {
+  background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,229,246,.72));
+}
+
+.handoff-shell {
+  min-height: 100svh;
+  padding-bottom: 78px;
+}
+
+.handoff-topbar {
+  width: min(1120px, calc(100vw - 24px));
+  margin: 10px auto 0;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  box-shadow: var(--ui-soft-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.handoff-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.handoff-brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ui-pink);
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(211, 95, 180, 0.16);
+}
+
+.handoff-lobby .lv2-header-logo {
+  color: var(--ui-ink);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  letter-spacing: 1px;
+  filter: none;
+}
+
+.handoff-code-pill {
+  min-width: 116px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.78);
+  border-color: rgba(219, 149, 215, 0.36);
+  color: var(--ui-ink);
+}
+
+.handoff-lobby .lv2-code-val {
+  color: var(--ui-pink);
+}
+
+.handoff-lobby .lv2-header-btn {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(219, 149, 215, 0.3);
+  color: var(--ui-ink);
+  backdrop-filter: blur(10px);
+}
+
+.handoff-tab-stage {
+  width: min(1120px, calc(100vw - 24px));
+  margin: 12px auto 0;
+  height: auto;
+  min-height: calc(100svh - 112px);
+  display: block;
+  overflow: visible;
+}
+
+.handoff-tab-panel {
+  display: none;
+}
+
+.handoff-tab-panel-active {
+  display: grid;
+  gap: 12px;
+}
+
+.handoff-lobby-hero,
+.handoff-card,
+.handoff-scene-card,
+.handoff-lobby-actions {
+  border-radius: 24px;
+  background: var(--ui-panel);
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  box-shadow: var(--ui-soft-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.handoff-lobby-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+}
+
+.handoff-room-kicker,
+.handoff-card-title small {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.handoff-room-kicker {
+  color: var(--ui-pink);
+}
+
+.handoff-room-heading h1 {
+  margin: 2px 0;
+  font-size: clamp(28px, 8vw, 44px);
+  color: #ba4b9a;
+}
+
+.handoff-room-heading p {
+  max-width: 360px;
+  color: rgba(107, 57, 117, 0.66);
+  font-weight: 700;
+}
+
+.handoff-room-count {
+  min-width: 86px;
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(219, 149, 215, 0.28);
+}
+
+.handoff-room-count span {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--ui-pink);
+}
+
+.handoff-room-count small {
+  color: rgba(107, 57, 117, 0.56);
+  font-weight: 900;
+}
+
+.handoff-scene-card {
+  position: relative;
+  padding: 10px;
+}
+
+.handoff-lobby .lv2-host-badge {
+  position: absolute;
+  z-index: 4;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(245, 181, 87, 0.42);
+  box-shadow: 0 8px 20px rgba(201, 128, 55, 0.12);
+}
+
+.handoff-lobby .lv2-host-crown,
+.handoff-lobby .lv2-crystal-frame::before,
+.handoff-lobby .lv2-crystal-frame::after {
+  animation: none !important;
+}
+
+.handoff-lobby .lv2-crystal-frame {
+  width: 100%;
+  max-width: none;
+  aspect-ratio: 16 / 9.8;
+  border-radius: 22px;
+}
+
+.handoff-lobby .lv2-crystal-frame::before,
+.handoff-lobby .lv2-crystal-frame::after,
+.handoff-lobby .lv2-crystal-corner {
+  display: none !important;
+}
+
+.handoff-lobby .lv2-frame-inner {
+  inset: 0;
+  border-radius: 22px;
+  background: transparent;
+}
+
+.handoff-lobby .lv2-preview-img {
+  opacity: 1;
+  border-radius: 22px;
+}
+
+.handoff-lobby .player-seat {
+  width: clamp(64px, 14vw, 92px);
+  min-height: 76px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ui-ink);
+  border: 1px solid rgba(219, 149, 215, 0.34);
+  box-shadow: 0 8px 18px rgba(155, 78, 160, 0.16);
+}
+
+.handoff-lobby .handoff-slots-card,
+.handoff-lobby .handoff-lobby-actions {
+  padding: 14px;
+}
+
+.handoff-card-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.handoff-card-title span {
+  color: var(--ui-ink);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.handoff-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.handoff-lobby .player-list-item,
+.handoff-lobby .lv2-empty-slot,
+.handoff-stat-row {
+  min-width: 0;
+  min-height: 58px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(219, 149, 215, 0.25);
+  box-shadow: 0 6px 16px rgba(161, 83, 159, 0.08);
+}
+
+.handoff-lobby .player-list-item {
+  padding: 8px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.handoff-lobby .player-list-name,
+.handoff-lobby .lv2-role-name,
+.handoff-lobby .lv2-setting-label {
+  color: var(--ui-ink);
+}
+
+.handoff-lobby .player-list-name {
+  flex: 1 1 110px;
+  font-weight: 900;
+}
+
+.handoff-lobby .player-list-stats {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  margin-inline-start: 42px;
+}
+
+.player-stat-chip,
+.handoff-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 62, 129, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.74), 0 4px 10px rgba(121, 51, 116, 0.08);
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.player-stat-chip {
+  min-height: 24px;
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.player-stat-chip b,
+.handoff-stat-chip b {
+  color: inherit;
+  font-size: 1.08em;
+  line-height: 1;
+}
+
+.player-stat-chip small,
+.handoff-stat-chip small {
+  color: inherit;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stat-total {
+  color: #6f3b00;
+  background: linear-gradient(180deg, #fff3bd, #f5c852);
+  border-color: rgba(157, 102, 6, 0.28);
+}
+
+.stat-mafia {
+  color: #7f1436;
+  background: linear-gradient(180deg, #ffe4ef, #f6a5c4);
+  border-color: rgba(171, 38, 90, 0.24);
+}
+
+.stat-citizens {
+  color: #155c64;
+  background: linear-gradient(180deg, #ddfbff, #92e2ec);
+  border-color: rgba(28, 129, 145, 0.22);
+}
+
+.handoff-lobby .player-list-badge,
+.handoff-lobby .lobby-kick-btn {
+  border-radius: 999px;
+}
+
+.handoff-lobby .lv2-empty-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: rgba(107, 57, 117, 0.42);
+  border-style: dashed;
+}
+
+.handoff-lobby-actions {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+
+.handoff-lobby .lv2-invite-btn {
+  min-height: 46px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.76);
+  color: var(--ui-ink);
+  border-color: rgba(219, 149, 215, 0.32);
+}
+
+.handoff-lobby .lv2-panel {
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+.handoff-lobby .lv2-panel-header {
+  position: static;
+  background: transparent;
+  border: 0;
+  padding: 0 0 10px;
+  backdrop-filter: none;
+}
+
+.handoff-lobby .lv2-settings-list,
+.handoff-lobby .lv2-roles-list,
+.handoff-lobby .lv2-theme-row,
+.handoff-lobby .lv2-bulk-btns {
+  padding-inline: 0;
+}
+
+.handoff-lobby .lv2-setting-row,
+.handoff-lobby .lv2-role-row {
+  min-height: 52px;
+  border-radius: 17px;
+  background: rgba(255,255,255,.72);
+  border-color: rgba(219, 149, 215, 0.22);
+}
+
+.handoff-lobby .lv2-setting-input {
+  min-height: 38px;
+  color: var(--ui-ink);
+  background: rgba(255,255,255,.86);
+  border-color: rgba(219, 149, 215, 0.36);
+}
+
+.handoff-lobby .vm-btn {
+  min-height: 42px;
+  color: var(--ui-muted);
+  background: rgba(255,255,255,.62);
+  border-color: rgba(219, 149, 215, 0.28);
+}
+
+.handoff-lobby .vm-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #f06ab4, #9b6bd3);
+}
+
+.handoff-host-lock {
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 16px;
+  color: var(--ui-muted);
+  background: rgba(255,255,255,.68);
+  border: 1px dashed rgba(219, 149, 215, 0.34);
+}
+
+.handoff-settings-locked .lv2-settings-list,
+.handoff-settings-locked .lv2-theme-row,
+.handoff-settings-locked .lv2-bulk-btns,
+.handoff-settings-locked .lv2-roles-title,
+.handoff-settings-locked .lv2-roles-list {
+  opacity: 0.48;
+}
+
+.handoff-stats-card,
+.handoff-more-card,
+#host-settings.handoff-card {
+  padding: 14px;
+  max-width: 860px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.handoff-stats-art {
+  width: 100%;
+  aspect-ratio: 16 / 7.5;
+  object-fit: cover;
+  border-radius: 22px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+}
+
+.handoff-stats-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.handoff-stat-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) repeat(3, minmax(62px, 82px));
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+}
+
+.handoff-stat-row.is-empty {
+  opacity: 0.55;
+}
+
+.handoff-stat-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(219, 149, 215, 0.28);
+}
+
+.handoff-stat-name {
+  min-width: 0;
+  color: var(--ui-ink);
+  font-size: 13px;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.handoff-stat-chip {
+  min-height: 40px;
+  padding: 5px 7px;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.handoff-stat-chip small {
+  font-size: 10px;
+}
+
+.handoff-more-card {
+  display: grid;
+  gap: 12px;
+}
+
+.handoff-lobby .lv2-enabled-extras,
+.handoff-lobby .lv2-chat {
+  margin: 0;
+  background: rgba(255,255,255,.68);
+  border-color: rgba(219, 149, 215, 0.24);
+}
+
+.handoff-lobby .lv2-chat {
+  min-height: 220px;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.handoff-lobby .lv2-chat-input-row input {
+  min-height: 42px;
+  color: var(--ui-ink);
+  background: rgba(255,255,255,.84);
+  border-color: rgba(219, 149, 215, 0.28);
+}
+
+.handoff-lobby .lv2-chat-send {
+  width: 42px;
+  height: 42px;
+  color: #fff;
+  background: linear-gradient(135deg, #f06ab4, #9b6bd3);
+}
+
+.handoff-bottom-tabs {
+  position: fixed;
+  z-index: 120;
+  left: 50%;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(520px, calc(100vw - 20px));
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 7px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(255,255,255,.8);
+  box-shadow: 0 16px 38px rgba(152, 72, 156, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+.handoff-tab-btn {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  border-radius: 19px;
+  background: transparent;
+  color: rgba(107, 57, 117, 0.58);
+  font-family: "Tajawal", sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.handoff-tab-btn span {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.handoff-tab-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #f06ab4, #9b6bd3);
+  box-shadow: 0 9px 20px rgba(219, 95, 171, 0.26);
+}
+
+.handoff-lobby .lv2-mobile-start-bar {
+  position: fixed;
+  z-index: 130;
+  left: 50%;
+  bottom: calc(82px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(520px, calc(100vw - 20px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+@media (min-width: 760px) {
+  .handoff-entry {
+    grid-template-columns: minmax(330px, 390px) 1fr minmax(280px, 360px);
+    align-items: center;
+  }
+
+  .handoff-entry-hero {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    padding-top: 34px;
+  }
+
+  .handoff-entry-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .handoff-entry::after {
+    content: "التحديثات";
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    min-height: 190px;
+    border-radius: 26px;
+    padding: 22px;
+    color: var(--ui-ink);
+    background: rgba(255,255,255,.58);
+    border: 1px solid rgba(255,255,255,.76);
+    box-shadow: var(--ui-soft-shadow);
+    backdrop-filter: blur(16px);
+    font-weight: 900;
+  }
+
+  .handoff-tab-panel-active[data-lobby-panel="lobby"] {
+    grid-template-columns: minmax(0, 1.15fr) minmax(310px, 0.85fr);
+    align-items: start;
+  }
+
+  .handoff-lobby-hero {
+    grid-column: 1 / -1;
+  }
+
+  .handoff-scene-card {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+  }
+
+  .handoff-slots-card,
+  .handoff-lobby-actions {
+    grid-column: 2;
+  }
+
+  .handoff-lobby .lv2-crystal-frame {
+    aspect-ratio: 16 / 10;
+  }
+
+  .handoff-slots-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .handoff-shell {
+    padding-bottom: 90px;
+  }
+
+  .handoff-tab-stage {
+    margin-top: 18px;
+  }
+
+  .handoff-bottom-tabs {
+    width: min(620px, calc(100vw - 40px));
+  }
+}
+
+@media (max-width: 520px) {
+  .handoff-topbar {
+    grid-template-columns: 1fr auto;
+    flex-wrap: wrap;
+    padding: 9px;
+  }
+
+  .handoff-brand .lv2-header-logo {
+    font-size: 15px;
+  }
+
+  .handoff-code-pill {
+    order: 3;
+    width: 100%;
+  }
+
+  .handoff-lobby-hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .handoff-room-count {
+    width: 100%;
+    min-height: 56px;
+  }
+
+  .handoff-slots-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .handoff-stat-row {
+    grid-template-columns: 38px minmax(0, 1fr) repeat(3, minmax(50px, 1fr));
+    gap: 6px;
+  }
+
+  .handoff-lobby .player-list-stats {
+    margin-inline-start: 0;
+  }
+
+  .player-stat-chip {
+    padding-inline: 6px;
+    font-size: 10px;
+  }
+
+  .handoff-stat-chip {
+    min-height: 36px;
+    font-size: 12px;
+  }
+
+  .handoff-stat-chip small {
+    font-size: 9px;
+  }
+}
