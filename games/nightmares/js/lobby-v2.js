@@ -131,7 +131,7 @@ function renderPlayers(players) {
     const div = document.createElement('div');
     div.className = `player-list-item player-status-${status}`;
     div.innerHTML = `
-      <span class="player-list-icon">${getPlayerPortraitHtml(p.icon, p.name, 'player-portrait-mini')}</span>
+      <span class="player-list-icon">${getCosmeticMiniCardHtml(p)}</span>
       <span class="player-list-name">${escapeHtml(p.name)}${p.id === session.id ? ' (أنت)' : ''}</span>
       <span class="player-list-stats" aria-label="إحصائيات اللاعب">${statChips}</span>
       ${inactive
@@ -193,7 +193,7 @@ function renderPlayerStats(players = {}) {
     const row = document.createElement('div');
     row.className = 'handoff-stat-row';
     row.innerHTML = `
-      <span class="handoff-stat-avatar">${getPlayerPortraitHtml(player.icon, player.name, 'player-portrait-mini')}</span>
+      <span class="handoff-stat-avatar">${getCosmeticMiniCardHtml(player)}</span>
       <span class="handoff-stat-name">${index + 1}. ${escapeHtml(player.name)}${player.id === session.id ? ' (أنت)' : ''}</span>
       <span class="handoff-stat-chip stat-total"><b>${totalWins}</b><small>الفوز</small></span>
       <span class="handoff-stat-chip stat-mafia"><b>${mafiaWins}</b><small>مافيا</small></span>
@@ -251,7 +251,7 @@ function renderPlayerSeats(players) {
     seat.style.left = pos.x + '%';
     seat.style.top = pos.y + '%';
     seat.innerHTML = `
-      <div class="player-seat-icon">${getPlayerPortraitHtml(p.icon, p.name, 'player-seat-portrait')}</div>
+      <div class="player-seat-icon">${getCosmeticSeatCardHtml(p)}</div>
       <div class="player-seat-name">${escapeHtml(p.name)}${p.isHost ? ' 👑' : ''}</div>
       <div class="player-seat-status">${inactive ? (status === 'kicked' ? 'مطرود' : 'غادر') : p.ready || p.isHost ? '✓ جاهز' : 'ينتظر...'}</div>
     `;

@@ -1929,7 +1929,7 @@ function renderGameTable(players, game) {
       seat.innerHTML = `
         <span class="ptc-seat">#${seatNumber}</span>
         <span class="ptc-frame">
-          <span class="ptc-avatar-shell">${getPlayerPortraitHtml(p.icon, p.name, 'ptc-avatar-img')}</span>
+          <span class="ptc-avatar-shell">${getCosmeticCardHtml(p, 'ptc-cosmetic-img')}</span>
           <span class="ptc-status-dot ${isActive ? 'online' : 'offline'}"></span>
           ${!p.alive ? '<span class="ptc-dead-overlay">☠</span>' : ''}
           ${voteCount ? `<span class="ptc-vote-badge" title="عدد الأصوات على هذا اللاعب">${voteCount}</span>` : ''}
@@ -2086,7 +2086,7 @@ function renderPlayersPanel(players = {}) {
       status === 'left' ? 'is-left' : '',
     ].filter(Boolean).join(' ');
     row.innerHTML = `
-      <span class="gpr-avatar">${getPlayerPortraitHtml(player.icon, player.name, 'gpr-avatar-img')}</span>
+      <span class="gpr-avatar">${getCosmeticCardHtml(player, 'gpr-avatar-img')}</span>
       <span class="gpr-main">
         <strong>${escapeHtml(player.name || 'لاعب')}</strong>
         <span class="gpr-tags">
@@ -2726,7 +2726,7 @@ function showActionMenu(target, actions, anchorEl) {
   shell.menu.classList.toggle('vote-action-sheet', isVotePhase);
   if (targetInfo) {
     shell.titleEl.innerHTML = `
-      <span class="action-menu-target-avatar">${getPlayerPortraitHtml(targetInfo.icon, targetInfo.name, 'action-menu-target-img')}</span>
+      <span class="action-menu-target-avatar">${getCosmeticCardHtml(targetInfo, 'action-menu-target-img')}</span>
       <span class="action-menu-target-copy">
         <span class="action-menu-kicker">${isVotePhase ? 'تأكيد التصويت' : 'تأكيد الاختيار'}</span>
         <strong>${escapeHtml(targetInfo.name || 'لاعب')}</strong>

@@ -48,7 +48,11 @@
     var links = document.querySelectorAll(selector);
     links.forEach(function (link) {
       link.addEventListener("click", function (e) {
-        e.preventDefault();
+        var href = link.getAttribute("href");
+        // Only block navigation for placeholder links; let real hrefs navigate normally
+        if (!href || href === "#") {
+          e.preventDefault();
+        }
         links.forEach(function (l) { l.classList.remove("active"); });
         link.classList.add("active");
       });

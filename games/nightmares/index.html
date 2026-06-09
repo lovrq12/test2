@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/ui-handoff.css">
+  <link rel="stylesheet" href="css/player-cards.css">
 </head>
 <body class="portal-nightmares">
 
@@ -40,8 +41,8 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label"><span class="css-icon">✦</span> اختر صورتك</label>
-        <div class="icon-grid" id="icon-grid"></div>
+        <label class="form-label"><span class="css-icon">✦</span> اختر بطاقتك</label>
+        <div class="pc-selector-grid" id="pc-selector-grid"></div>
       </div>
 
       <div class="divider">اختر وضع اللعب</div>
@@ -88,10 +89,12 @@
 <script src="js/firebase.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/roles.js"></script>
+<script src="js/player-cards.js"></script>
 <script src="js/app.js"></script>
 <script>
-let selectedIcon = 'wolf';
-const icons = Object.keys(ANIMAL_ICONS);
+// ── Cosmetic card selection state ──────────────────
+let selectedCard = COSMETIC_CARDS[0].id; // default: shadow-reaper
+let selectedIcon = 'wolf'; // legacy compat only
 
 function initEntryTabs() {
   const buttons = document.querySelectorAll('[data-entry-tab]');
@@ -113,31 +116,10 @@ function initEntryTabs() {
   });
 }
 
-function renderIcons() {
-  const grid = document.getElementById('icon-grid');
-  grid.innerHTML = '';
-  icons.forEach(id => {
-    const el = document.createElement('button');
-    el.type = 'button';
-    el.className = 'icon-option' + (id === selectedIcon ? ' selected' : '');
-    el.title = getPlayerPortraitLabel(id);
-
-    const image = document.createElement('span');
-    image.className = 'entry-avatar-frame';
-    image.setAttribute('aria-label', getPlayerPortraitLabel(id));
-    image.innerHTML = getPlayerPortraitHtml(id, getPlayerPortraitLabel(id), 'entry-avatar-img');
-
-    const label = document.createElement('span');
-    label.className = 'avatar-name';
-    label.textContent = getPlayerPortraitLabel(id);
-
-    el.append(image, label);
-    el.addEventListener('click', () => {
-      selectedIcon = id;
-      grid.querySelectorAll('.icon-option').forEach(i => i.classList.remove('selected'));
-      el.classList.add('selected');
-    });
-    grid.appendChild(el);
+function initCardSelector() {
+  const grid = document.getElementById('pc-selector-grid');
+  renderCosmeticCardSelector(grid, selectedCard, (cardId) => {
+    selectedCard = cardId;
   });
 }
 
@@ -145,8 +127,8 @@ function getValidatedInput() {
   const name = document.getElementById('player-name').value.trim();
   if (!name) { showToast('أدخل اسمك أولاً', 'error'); return null; }
   if (name.length < 2) { showToast('الاسم قصير جداً', 'error'); return null; }
-  if (!selectedIcon) { showToast('اختر صورتك أولاً', 'error'); return null; }
-  return { name, icon: selectedIcon };
+  if (!selectedCard) { showToast('اختر بطاقتك أولاً', 'error'); return null; }
+  return { name, icon: selectedIcon, appearanceCard: selectedCard };
 }
 
 document.getElementById('btn-create').addEventListener('click', async () => {
@@ -168,6 +150,7 @@ document.getElementById('btn-create').addEventListener('click', async () => {
       id: playerId,
       name: inp.name,
       icon: inp.icon,
+      appearanceCard: inp.appearanceCard,
       role: null,
       team: null,
       alive: true,
@@ -275,6 +258,7 @@ async function joinRoom() {
       await DB.update(`rooms/${foundRoomId}/players/${existingId}`, {
         name: inp.name,
         icon: players[existingId].icon || inp.icon,
+        appearanceCard: inp.appearanceCard,
         connected: true,
         online: true,
         status: 'active',
@@ -294,6 +278,7 @@ async function joinRoom() {
       id: playerId,
       name: inp.name,
       icon: inp.icon,
+      appearanceCard: inp.appearanceCard,
       role: null,
       team: null,
       alive: true,
@@ -341,7 +326,7 @@ function hideEntryInfo() {
 }
 
 initEntryTabs();
-renderIcons();
+initCardSelector();
 initSoundButton();
 
 const portalParams = new URLSearchParams(window.location.search);
@@ -352,5 +337,3 @@ if (portalParams.get('mode') === 'join') {
 setTimeout(hideLoading, 800);
 </script>
 </body>
-</html>
-
